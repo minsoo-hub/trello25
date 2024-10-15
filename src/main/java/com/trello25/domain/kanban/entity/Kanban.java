@@ -36,4 +36,8 @@ public class Kanban extends BaseEntity {
         this.title = title;
         this.status = EntityStatus.ACTIVATED;
     }
+
+    public void delete() {
+        status = EntityStatus.DELETED;
+    }
 }

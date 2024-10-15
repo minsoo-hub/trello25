@@ -1,6 +1,7 @@
 package com.trello25.domain.kanban.service;
 
 import static com.trello25.exception.ErrorCode.BOARD_NOT_FOUND;
+import static com.trello25.exception.ErrorCode.KANBAN_NOT_FOUND;
 
 import com.trello25.domain.board.entity.Board;
 import com.trello25.domain.board.repository.BoardRepository;
@@ -36,5 +37,14 @@ public class KanbanService {
         Kanban kanban = new Kanban(board, request.getTitle());
         kanbanRepository.save(kanban);
         kanbanPositionService.addKanban(kanban);
+    }
+
+    public void deleteKanban(AuthUser authUser, long id) {
+        // TODO: 칸반 삭제 권한을 가지고 있는 멤버인지 확인 필요, 로그인 기능 구현 완료 시 수정예정
+
+        Kanban kanban = kanbanRepository.findByIdAndStatus(id, EntityStatus.ACTIVATED)
+                .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
+        kanban.delete();
+        kanbanPositionService.deleteKanban(kanban);
     }
 }

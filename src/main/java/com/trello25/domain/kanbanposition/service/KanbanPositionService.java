@@ -1,8 +1,11 @@
 package com.trello25.domain.kanbanposition.service;
 
+import static com.trello25.exception.ErrorCode.KANBAN_POSITION_NOT_FOUND;
+
 import com.trello25.domain.kanban.entity.Kanban;
 import com.trello25.domain.kanbanposition.entity.KanbanPosition;
 import com.trello25.domain.kanbanposition.repository.KanbanPositionRepository;
+import com.trello25.exception.ApplicationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,5 +26,11 @@ public class KanbanPositionService {
         }
 
         kanbanPositionRepository.save(kanbanPosition);
+    }
+
+    public void deleteKanban(Kanban kanban) {
+        KanbanPosition kanbanPosition = kanbanPositionRepository.findByBoard(kanban.getBoard())
+                .orElseThrow(() -> new ApplicationException(KANBAN_POSITION_NOT_FOUND));
+        kanbanPosition.deleteKanban(kanban.getId());
     }
 }

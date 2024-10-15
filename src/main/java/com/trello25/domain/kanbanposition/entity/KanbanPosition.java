@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,5 +45,12 @@ public class KanbanPosition {
                 .append(",")
                 .append(kanbanId);
         this.positions = sb.toString();
+    }
+
+    public void deleteKanban(long kanbanId) {
+        String kanbanIdString = String.valueOf(kanbanId);
+        this.positions = Arrays.stream(this.positions.split(","))
+                .filter(position -> !position.equals(kanbanIdString))
+                .collect(Collectors.joining(","));
     }
 }

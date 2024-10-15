@@ -11,7 +11,8 @@ public enum ErrorCode {
     SAME_OLD_PASSWORD(HttpStatus.BAD_REQUEST, "새 비밀번호는 기존 비밀번호와 같을 수 없습니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 JWT 토큰입니다."),
-    INVALID_AUTH_REQUEST(HttpStatus.BAD_REQUEST, "@Auth와 AuthUser 타입은 함께 사용되어야 합니다.");
+    UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+    INVALID_AUTH_REQUEST(HttpStatus.BAD_REQUEST, "유효하지 않은 인증 요청입니다.");
     private final HttpStatus httpStatus;
     private final String message;
 

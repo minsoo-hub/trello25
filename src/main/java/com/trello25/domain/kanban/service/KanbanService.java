@@ -8,6 +8,7 @@ import com.trello25.domain.board.repository.BoardRepository;
 import com.trello25.domain.common.entity.EntityStatus;
 import com.trello25.domain.kanban.AuthUser;
 import com.trello25.domain.kanban.dto.request.CreateKanbanRequest;
+import com.trello25.domain.kanban.dto.request.UpdateKanbanPositionRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanTitleRequest;
 import com.trello25.domain.kanban.entity.Kanban;
 import com.trello25.domain.kanban.repository.KanbanRepository;
@@ -55,5 +56,13 @@ public class KanbanService {
         Kanban kanban = kanbanRepository.findByIdAndStatus(id, EntityStatus.ACTIVATED)
                 .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
         kanban.updateTitle(request.getTitle());
+    }
+
+    public void updateKanbanPosition(AuthUser authUser, long id, UpdateKanbanPositionRequest request) {
+        // TODO: 칸반 수정 권한을 가지고 있는 멤버인지 확인 필요, 로그인 기능 구현 완료 시 수정예정
+
+        Kanban kanban = kanbanRepository.findByIdAndStatus(id, EntityStatus.ACTIVATED)
+                .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
+        kanbanPositionService.updateKanbanPosition(kanban, request.getPosition());
     }
 }

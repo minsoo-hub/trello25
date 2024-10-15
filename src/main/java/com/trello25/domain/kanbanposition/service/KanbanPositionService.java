@@ -33,4 +33,10 @@ public class KanbanPositionService {
                 .orElseThrow(() -> new ApplicationException(KANBAN_POSITION_NOT_FOUND));
         kanbanPosition.deleteKanban(kanban.getId());
     }
+
+    public void updateKanbanPosition(Kanban kanban, int position) {
+        KanbanPosition kanbanPosition = kanbanPositionRepository.findByBoard(kanban.getBoard())
+                .orElseThrow(() -> new ApplicationException(KANBAN_POSITION_NOT_FOUND));
+        kanbanPosition.updateKanbanPosition(kanban.getId(), position);
+    }
 }

@@ -31,4 +31,10 @@ public class WorkspaceController {
         return workspaceService.update(id, request);
 
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Workspace> deleteWorkspace(  @PathVariable Long id){
+        return workspaceService.delete(id);
+    }
+
 }

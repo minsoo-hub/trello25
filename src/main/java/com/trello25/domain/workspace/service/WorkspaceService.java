@@ -7,5 +7,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface WorkspaceService {
     ResponseEntity<Void> create(WorkspaceRequest request);
-    ResponseEntity<Workspace> update(Long id, UpdateWorkspaceRequest requset);
+    ResponseEntity<Workspace> update(Long id, UpdateWorkspaceRequest request);
+    ResponseEntity<Workspace> delete(Long id);
 }

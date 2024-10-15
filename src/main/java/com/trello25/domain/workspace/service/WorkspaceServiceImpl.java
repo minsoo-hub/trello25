@@ -1,5 +1,6 @@
 package com.trello25.domain.workspace.service;
 
+import com.trello25.domain.common.entity.EntityStatus;
 import com.trello25.domain.workspace.dto.UpdateWorkspaceRequest;
 import com.trello25.domain.workspace.dto.WorkspaceRequest;
 import com.trello25.domain.workspace.entity.Workspace;
@@ -9,6 +10,7 @@ import com.trello25.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
       return ResponseEntity.ok().build();
     }
 
+    @Transactional
     public ResponseEntity<Workspace> update(Long id, UpdateWorkspaceRequest request){
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.WORKSPACE_NOT_FOUND));
 
@@ -38,6 +41,14 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         Workspace saveWorkspace = workspaceRepository.save(workspace);
         return ResponseEntity.ok().body(saveWorkspace);
     }
+
+    public ResponseEntity<Workspace> delete (Long id){
+        Workspace workspace = workspaceRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.WORKSPACE_NOT_FOUND));
+       workspace.delete();
+        Workspace saveWorkspace = workspaceRepository.save(workspace);
+        return ResponseEntity.ok().body(saveWorkspace);
+    }
+
 }
 
 

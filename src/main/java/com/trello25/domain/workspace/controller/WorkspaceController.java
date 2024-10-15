@@ -23,7 +23,7 @@ public class WorkspaceController {
        return  ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Workspace> updateWorkspace(
             @PathVariable Long id,
             @RequestBody UpdateWorkspaceRequest request

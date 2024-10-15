@@ -1,13 +1,12 @@
 package com.trello25.domain.workspace.controller;
 
+import com.trello25.domain.workspace.dto.UpdateWorkspaceRequest;
 import com.trello25.domain.workspace.dto.WorkspaceRequest;
-import com.trello25.domain.workspace.dto.addMembersRequest;
+import com.trello25.domain.workspace.entity.Workspace;
 import com.trello25.domain.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/workspaces")
@@ -22,5 +21,14 @@ public class WorkspaceController {
     ){
         ResponseEntity<Void> result = workspaceService.create(request);
        return  ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Workspace> updateWorkspace(
+            @PathVariable Long id,
+            @RequestBody UpdateWorkspaceRequest request
+    ){
+        return workspaceService.update(id, request);
+
     }
 }

@@ -3,6 +3,7 @@ package com.trello25.domain.workspace.entity;
 import com.trello25.domain.board.entity.Board;
 import com.trello25.domain.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,6 +30,11 @@ public class Workspace extends BaseEntity {
             String title,
             String description
     ){
+        this.title = title;
+        this.description = description;
+    }
+
+    public void update(String title, String description) {
         this.title = title;
         this.description = description;
     }

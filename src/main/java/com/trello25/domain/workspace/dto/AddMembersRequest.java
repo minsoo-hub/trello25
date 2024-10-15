@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class addMembersRequest {
+public class AddMembersRequest {
         @NotNull(message = "email을 입력해주세요")
         private String email;
 

@@ -39,4 +39,9 @@ public class KanbanPositionService {
                 .orElseThrow(() -> new ApplicationException(KANBAN_POSITION_NOT_FOUND));
         kanbanPosition.updateKanbanPosition(kanban.getId(), position);
     }
+
+    public KanbanPosition getKanbanPosition(long boardId) {
+        return kanbanPositionRepository.findByBoardId(boardId)
+                .orElseThrow(() -> new ApplicationException(KANBAN_POSITION_NOT_FOUND));
+    }
 }

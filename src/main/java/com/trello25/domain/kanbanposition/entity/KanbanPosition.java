@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,5 +71,14 @@ public class KanbanPosition {
 
         positions.add(position, String.valueOf(kanbanId));
         this.positions = String.join(",", positions);
+    }
+
+    public List<Long> getPositions() {
+        if (positions.isBlank()) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(this.positions.split(","))
+                .map(Long::valueOf)
+                .toList();
     }
 }

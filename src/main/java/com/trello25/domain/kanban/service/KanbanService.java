@@ -10,10 +10,16 @@ import com.trello25.domain.kanban.AuthUser;
 import com.trello25.domain.kanban.dto.request.CreateKanbanRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanPositionRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanTitleRequest;
+import com.trello25.domain.kanban.dto.response.KanbanResponse;
 import com.trello25.domain.kanban.entity.Kanban;
 import com.trello25.domain.kanban.repository.KanbanRepository;
+import com.trello25.domain.kanbanposition.entity.KanbanPosition;
 import com.trello25.domain.kanbanposition.service.KanbanPositionService;
 import com.trello25.exception.ApplicationException;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,5 +70,23 @@ public class KanbanService {
         Kanban kanban = kanbanRepository.findByIdAndStatus(id, EntityStatus.ACTIVATED)
                 .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
         kanbanPositionService.updateKanbanPosition(kanban, request.getPosition());
+    }
+
+    @Transactional(readOnly = true)
+    public List<KanbanResponse> getKanbans(long boardId) {
+        List<Kanban> kanbans = kanbanRepository.findAllByBoardIdAndStatus(boardId, EntityStatus.ACTIVATED);
+        KanbanPosition kanbanPosition = kanbanPositionService.getKanbanPosition(boardId);
+
+        List<Long> positions = kanbanPosition.getPositions();
+        Map<Long, Integer> positionMap = new HashMap<>();
+        for (int position = 0; position < positions.size(); position++) {
+            Long kanbanId = positions.get(position);
+            positionMap.put(kanbanId, position);
+        }
+
+        return kanbans.stream()
+                .sorted(Comparator.comparingInt(o -> positionMap.get(o.getId())))
+                .map(kanban -> new KanbanResponse(kanban.getId(), kanban.getTitle()))
+                .toList();
     }
 }

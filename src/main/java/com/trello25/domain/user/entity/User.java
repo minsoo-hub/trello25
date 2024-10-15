@@ -27,10 +27,12 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole userRole;
+
 /*
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WorkspaceMember> workspaceMembers;
 */
+
     public User(String email, String password,UserRole userRole) {
         this.email = email;
         this.password = password;

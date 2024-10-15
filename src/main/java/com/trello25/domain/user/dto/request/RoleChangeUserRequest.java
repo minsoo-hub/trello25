@@ -11,5 +11,5 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class RoleChangeUserRequest {
         @NonNull
-        private UserRole role;
+        private String role;
 }

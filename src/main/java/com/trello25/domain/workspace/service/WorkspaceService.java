@@ -1,5 +1,8 @@
 package com.trello25.domain.workspace.service;
 
-public interface WorkspaceService {
+import com.trello25.domain.workspace.dto.WorkspaceRequest;
+import org.springframework.http.ResponseEntity;
 
+public interface WorkspaceService {
+    ResponseEntity<Void> create(WorkspaceRequest request);
 }

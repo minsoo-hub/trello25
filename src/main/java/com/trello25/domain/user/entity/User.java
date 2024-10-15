@@ -1,5 +1,6 @@
 package com.trello25.domain.user.entity;
 
+import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.common.entity.BaseEntity;
 import com.trello25.domain.user.enums.UserRole;
 import jakarta.persistence.*;
@@ -23,7 +24,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole userRole;
@@ -37,12 +37,15 @@ public class User extends BaseEntity {
         this.userRole = userRole;
     }
 
-    public static User fromAuthUser(AuthUser authUser) {
-        return new User(authUser.getId(), authUser.getEmail(), authUser.getUserRole());
+
+    protected User(Long id, String email, String password, UserRole userRole) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.userRole = userRole;
     }
 
     public void changePassword(String password) {
-
         this.password = password;
     }
 

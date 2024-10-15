@@ -1,6 +1,9 @@
 package com.trello25.domain.user.enums;
 
 
+import com.trello25.exception.ApplicationException;
+import com.trello25.exception.ErrorCode;
+
 import java.util.Arrays;
 
 public enum UserRole {
@@ -10,6 +13,6 @@ public enum UserRole {
         return Arrays.stream(UserRole.values())
                 .filter(r -> r.name().equalsIgnoreCase(role))
                 .findFirst()
-                .orElseThrow(() -> new InvalidRequestException("유효하지 않은 UserRole"));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_USER_ROLE));
     }
 }

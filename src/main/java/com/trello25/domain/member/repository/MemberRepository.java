@@ -26,4 +26,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             + "join Kanban k on k.board.id = b.id "
             + "where m.user.id = :userId and k.id = :kanbanId")
     Optional<Member> findMemberForKanbanByKanbanId(long userId, long kanbanId);
+
+    @Query("select m from Member m "
+            + "join m.workspace w "
+            + "join Board b on b.workspace.id = w.id "
+            + "join Kanban k on k.board.id = b.id "
+            + "join Card c on c.kanban.id = k.id "
+            + "where m.user.id = :userId and c.id = :cardId")
+    Optional<Member> findMemberForCommentByCardId(long userId, long cardId);
 }

@@ -36,5 +36,4 @@ public class WorkspaceController {
     public ResponseEntity<Workspace> deleteWorkspace(  @PathVariable Long id){
         return workspaceService.delete(id);
     }
-
 }

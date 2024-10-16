@@ -4,6 +4,7 @@ import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.common.entity.BaseEntity;
 import com.trello25.domain.user.enums.UserRole;
 import jakarta.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,5 +55,4 @@ public class User extends BaseEntity {
     public void updateRole(UserRole userRole) {
         this.userRole = userRole;
     }
-
 }

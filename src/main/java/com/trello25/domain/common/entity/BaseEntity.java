@@ -22,13 +22,13 @@ public class BaseEntity {
     @CreatedDate
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createdAt;
+    protected LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column()
     @Temporal(value = TemporalType.TIMESTAMP)
-    private LocalDateTime modifiedAt;
+    protected LocalDateTime modifiedAt;
 
     @Enumerated
-    private EntityStatus status;
+    protected EntityStatus status;
 }

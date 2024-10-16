@@ -4,9 +4,15 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
+    INVALID_KANBAN_POSITION(HttpStatus.NOT_FOUND, "유효하지 않은 칸반 위치입니다."),
+    WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 workspace입니다."),
+
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 보드입니다."),
+    KANBAN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 칸반입니다."),
+    KANBAN_POSITION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 칸반 순서입니다."),
+
     EMAIL_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
     INVALID_USER_ROLE(HttpStatus.BAD_REQUEST, "유효하지 않은 UserRole입니다."),
-    WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 workspace입니다."),
     UNAUTHORIZED(HttpStatus.FORBIDDEN, "권한확인이 필요합니다.");
 
     private final HttpStatus httpStatus;

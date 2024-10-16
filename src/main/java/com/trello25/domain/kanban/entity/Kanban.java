@@ -1,7 +1,8 @@
-package com.trello25.domain.list.entity;
+package com.trello25.domain.kanban.entity;
 
 import com.trello25.domain.board.entity.Board;
 import com.trello25.domain.common.entity.BaseEntity;
+import com.trello25.domain.common.entity.EntityStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class List extends BaseEntity {
+public class Kanban extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,11 +31,17 @@ public class List extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    private int position;
-
-    public List(Board board, String title, int position) {
+    public Kanban(Board board, String title) {
         this.board = board;
         this.title = title;
-        this.position = position;
+        this.status = EntityStatus.ACTIVATED;
+    }
+
+    public void delete() {
+        status = EntityStatus.DELETED;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
     }
 }

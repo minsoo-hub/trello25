@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: trello25
+  profiles:
+    active: local

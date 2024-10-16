@@ -30,11 +30,11 @@ public class List extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    private int order;
+    private int position;
 
-    public List(Board board, String title, int order) {
+    public List(Board board, String title, int position) {
         this.board = board;
         this.title = title;
-        this.order = order;
+        this.position = position;
     }
 }

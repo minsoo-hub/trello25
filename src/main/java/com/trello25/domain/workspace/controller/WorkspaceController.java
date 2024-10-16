@@ -1,5 +1,6 @@
 package com.trello25.domain.workspace.controller;
 
+import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.workspace.dto.UpdateWorkspaceRequest;
 import com.trello25.domain.workspace.dto.WorkspaceRequest;
 import com.trello25.domain.workspace.entity.Workspace;
@@ -16,25 +17,34 @@ public class WorkspaceController {
 
     @PostMapping
     public ResponseEntity<Void> createWorkspace(
-            //token나오면 principle
+            AuthUser authUser,
             @RequestBody WorkspaceRequest request
     ){
-        ResponseEntity<Void> result = workspaceService.create(request);
+        System.out.println(authUser.getUserRole());
+        workspaceService.create(authUser, request);
        return  ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Workspace> updateWorkspace(
             @PathVariable Long id,
-            @RequestBody UpdateWorkspaceRequest request
+            @RequestBody UpdateWorkspaceRequest request,
+            AuthUser authUser
+            
     ){
-        return workspaceService.update(id, request);
+        return workspaceService.update(id, request, authUser);
 
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Workspace> deleteWorkspace(  @PathVariable Long id){
-        return workspaceService.delete(id);
+    public ResponseEntity<Workspace> deleteWorkspace(  @PathVariable Long id, AuthUser authUser){
+        return workspaceService.delete(id, authUser);
     }
+
+    @GetMapping
+    public ResponseEntity<Void> getWorkspaces(){
+        return workspaceService.getAllSpace();
+    }
+
 
 }

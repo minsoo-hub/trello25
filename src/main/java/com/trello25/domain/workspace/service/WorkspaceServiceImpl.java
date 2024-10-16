@@ -67,7 +67,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     public void checkIfUserIsAuthorized(AuthUser authUser) {
         if (authUser.getUserRole() == UserRole.USER) {
-            throw new ApplicationException(ErrorCode.UNAUTHORIZED);
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
     }
 

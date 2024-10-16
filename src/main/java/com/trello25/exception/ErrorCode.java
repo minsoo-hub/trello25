@@ -19,12 +19,9 @@ public enum ErrorCode {
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 보드입니다."),
     KANBAN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 칸반입니다."),
     KANBAN_POSITION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 칸반 순서입니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 
-    EMAIL_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
-
-    UNAUTHORIZED(HttpStatus.FORBIDDEN, "권한확인이 필요합니다."),
-
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다.");
+    EMAIL_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
 
 
     private final HttpStatus httpStatus;

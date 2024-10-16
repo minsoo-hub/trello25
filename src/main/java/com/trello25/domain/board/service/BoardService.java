@@ -1,9 +1,6 @@
 package com.trello25.domain.board.service;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.trello25.domain.board.dto.request.CreateBoardRequest;
@@ -38,28 +35,12 @@ public class BoardService {
     private final WorkspaceRepository workspaceRepository;
     private final MemberRepository memberRepository;
     private final KanbanService kanbanService;
+    private final AmazonS3 s3Client;
 
-    @Value("${cloud.aws.credentials.access-key}")
-    private String AWS_ACCESS_KEY;
-    @Value("${cloud.aws.credentials.secret-key}")
-    private String AWS_SECRET_KEY;
-    @Value("${cloud.aws.region.static}")
-    private String AWS_REGION;
     @Value("${background.default.image}")
     private String DEFAULT_IMAGE;
 
-    private AmazonS3 s3Client() {
-        //accesskey, secretkey 자격증명 만듬
-        BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
-        return AmazonS3ClientBuilder.standard()
-            .withRegion(AWS_REGION)
-            .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
-            .build();
-    }
-
     public void createBoard(Long currentUserId, long id, CreateBoardRequest createBoardRequest) {
-        //로그인 확인 여부 확인
-
         //워크스페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
             .orElseThrow(()-> new ApplicationException(ErrorCode.LOGIN_REQUIRED));
@@ -240,8 +221,8 @@ public class BoardService {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
 
-        s3Client().putObject(new PutObjectRequest("nbc.trello", s3ImageName, imageInputStream, objectMetadata));
-        String urlPath = s3Client().getUrl("nbc.trello", s3ImageName).toString();
+        s3Client.putObject(new PutObjectRequest("nbc.trello", s3ImageName, imageInputStream, objectMetadata));
+        String urlPath = s3Client.getUrl("nbc.trello", s3ImageName).toString();
 
         board.updateBackground(originalFilename, urlPath);
         boardRepository.save(board);

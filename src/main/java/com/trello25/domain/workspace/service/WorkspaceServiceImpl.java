@@ -28,7 +28,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * @param request
      * @return statuscode 200
      */
-    //todo : 모든 API ADMIN 권한 확인 필요 !!
     public ResponseEntity<Void> create(AuthUser authUser, WorkspaceRequest request) {
         checkIfUserIsAuthorized(authUser);
 
@@ -54,7 +53,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         checkIfUserIsAuthorized(authUser);
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.WORKSPACE_NOT_FOUND));
         workspace.delete();
-        System.out.println(workspace.getStatus());
+
         Workspace saveWorkspace = workspaceRepository.save(workspace);
         return ResponseEntity.ok().body(saveWorkspace);
     }

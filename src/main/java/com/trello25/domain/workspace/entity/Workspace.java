@@ -3,13 +3,17 @@ package com.trello25.domain.workspace.entity;
 import com.trello25.domain.board.entity.Board;
 import com.trello25.domain.common.entity.BaseEntity;
 import com.trello25.domain.common.entity.EntityStatus;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -25,7 +29,6 @@ public class Workspace extends BaseEntity {
 
     @OneToMany(mappedBy = "workspace", fetch = FetchType.EAGER)
     private List<Board> boards = new ArrayList<>();
-
 
     public Workspace (
             String title,

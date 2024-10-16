@@ -14,5 +14,17 @@ spring:
         show_sql: true
         format_sql: true
 
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: nbc.trello
+
+background.default.image: https://s3.ap-northeast-2.amazonaws.com/nbc.trello/default-image.jpg
+
 slack:
   token: ${SLACK_TOKEN}

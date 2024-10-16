@@ -2,6 +2,7 @@ package com.trello25.domain.comment.entity;
 
 import com.trello25.domain.card.entity.Card;
 import com.trello25.domain.common.entity.BaseEntity;
+import com.trello25.domain.common.entity.EntityStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -34,5 +35,9 @@ public class Comment extends BaseEntity {
 
     public void updateContent(String content) {
         this.content = content;
+    }
+
+    public void delete() {
+        this.status = EntityStatus.DELETED;
     }
 }

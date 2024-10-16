@@ -55,4 +55,17 @@ public class CommentService {
 
         comment.updateContent(request.getContent());
     }
+
+    public void deleteComment(AuthUser authUser, long commentId) {
+        Comment comment = commentRepository.findByIdAndStatus(commentId, EntityStatus.ACTIVATED)
+                .orElseThrow(() -> new ApplicationException(COMMENT_NOT_FOUND));
+
+        Member member = memberRepository.findMemberForCommentByCommentId(authUser.getId(), commentId)
+                .orElseThrow(() -> new ApplicationException(UNAUTHORIZED_ACCESS));
+        if (member.getPermission() == Permission.READ_ONLY) {
+            throw new ApplicationException(UNAUTHORIZED_ACCESS);
+        }
+
+        comment.delete();
+    }
 }

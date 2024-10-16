@@ -30,7 +30,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     //todo : 모든 API ADMIN 권한 확인 필요 !!
     public ResponseEntity<Void> create(AuthUser authUser, WorkspaceRequest request) {
-        //권한 ADMIN인지 확인하는 logic 필요
         checkIfUserIsAuthorized(authUser);
 
         Workspace Workspace = new Workspace(

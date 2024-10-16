@@ -1,5 +1,6 @@
 package com.trello25.domain.user.service;
 
+import com.trello25.domain.common.entity.EntityStatus;
 import com.trello25.domain.user.dto.request.ChangePasswordUserRequest;
 import com.trello25.domain.user.dto.request.RoleChangeUserRequest;
 import com.trello25.domain.user.dto.response.UserResponse;
@@ -13,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -61,5 +64,12 @@ public class UserService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         user.updateRole(UserRole.of(request.getRole()));
+    }
+    public List<UserResponse> getUsersByEmails(List<String> emails) {
+        // ACTIVATED 상태의 유저만 조회
+        List<User> users = userRepository.findAllByEmailInAndStatus(emails, EntityStatus.ACTIVATED);
+        return users.stream()
+                .map(user -> new UserResponse(user.getId(), user.getEmail(), user.getUserRole()))
+                .collect(Collectors.toList());
     }
 }

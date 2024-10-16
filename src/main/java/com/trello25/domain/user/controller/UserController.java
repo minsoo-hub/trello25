@@ -13,16 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    // 인증된 사용자의 정보를 가져오기 위해 @Auth 사용
+    // 인증된 사용자의 정보를 가져오기 위해 @AuthenticationPrincipal 사용
     @GetMapping("/users/me")
     public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal AuthUser authUser) {
-        // @Auth 어노테이션을 통해 인증된 사용자 정보 (AuthUser) 주입
+        // @AuthenticationPrincipal을 통해 인증된 사용자 정보 (AuthUser) 주입
         return ResponseEntity.ok(userService.getUser(authUser.getId()));
     }
 
@@ -31,7 +33,7 @@ public class UserController {
     public ResponseEntity<Void> changePassword(@AuthenticationPrincipal AuthUser authUser,
                                                @PathVariable long id,
                                                @RequestBody ChangePasswordUserRequest changePasswordUserRequest) {
-        // 본인 확인을 위해 @Auth 어노테이션 사용
+        // 본인 확인을 위해 @AuthenticationPrincipal 사용
         if (authUser.getId() != id) {
             throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
@@ -50,6 +52,11 @@ public class UserController {
         }
         userService.updateUserRole(id, userRoleChangeRequest);
         return ResponseEntity.noContent().build();
+    }
+    @PostMapping("/by-emails")
+    public ResponseEntity<List<UserResponse>> getUsersByEmails(@RequestBody List<String> emails) {
+        List<UserResponse> users = userService.getUsersByEmails(emails);
+        return ResponseEntity.ok(users);
     }
 }
 

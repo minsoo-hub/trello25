@@ -7,6 +7,7 @@ import com.trello25.domain.workspace.entity.Workspace;
 import com.trello25.domain.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,24 +20,25 @@ public class WorkspaceController {
 
     @PostMapping
     public ResponseEntity<Void> createWorkspace(
-            //token나오면 principle
-            @RequestBody WorkspaceRequest request, AuthUser authUser
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestBody WorkspaceRequest request
     ){
-        ResponseEntity<Void> result = workspaceService.create(authUser, request);
-       return  ResponseEntity.ok().build();
+       return  workspaceService.create(authUser, request);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Workspace> updateWorkspace(
             @PathVariable Long id,
-            @RequestBody UpdateWorkspaceRequest request, AuthUser authUser
+            @RequestBody UpdateWorkspaceRequest request,
+            @AuthenticationPrincipal AuthUser authUser
     ){
         return workspaceService.update(id, request, authUser);
 
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Workspace> deleteWorkspace(  @PathVariable Long id, AuthUser authUser){
+    public ResponseEntity<Workspace> deleteWorkspace(  @PathVariable Long id,
+                                                       @AuthenticationPrincipal AuthUser authUser){
         return workspaceService.delete(id, authUser);
     }
 

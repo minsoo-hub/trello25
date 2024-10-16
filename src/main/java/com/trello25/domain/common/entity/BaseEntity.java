@@ -30,5 +30,6 @@ public class BaseEntity {
     protected LocalDateTime modifiedAt;
 
     @Enumerated
-    protected EntityStatus status;
+    @Column(nullable = false)
+    protected EntityStatus status = EntityStatus.ACTIVATED;
 }

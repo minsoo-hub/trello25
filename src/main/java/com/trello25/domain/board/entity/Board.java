@@ -3,7 +3,9 @@ package com.trello25.domain.board.entity;
 import com.trello25.domain.board.enums.BackColors;
 import com.trello25.domain.common.entity.BaseEntity;
 import com.trello25.domain.common.entity.EntityStatus;
+import com.trello25.domain.kanban.entity.Kanban;
 import com.trello25.domain.workspace.entity.Workspace;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,12 +16,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Board extends BaseEntity {
 
     @Id
@@ -38,6 +47,8 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
 
+    @OneToMany(mappedBy = "kanban", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Kanban> kanbanList = new ArrayList<>();
 
     public Board(String title, BackColors backColor, String imagePath, Workspace workspace) {
         this.title = title;
@@ -54,5 +65,6 @@ public class Board extends BaseEntity {
 
     public void delete(){
         this.setStatus(EntityStatus.DELETED);
+        kanbanList.forEach(Kanban::delete);
     }
 }

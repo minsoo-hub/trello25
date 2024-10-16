@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class KanbanController {
 
     private final KanbanService kanbanService;
-/*
+
     @PostMapping("/kanbans")
     public ResponseEntity<Void> createKanban(
             @RequestBody CreateKanbanRequest request
@@ -83,5 +83,5 @@ public class KanbanController {
         return ResponseEntity.ok(kanbanService.getKanbans(boardId));
     }
 
- */
+
 }

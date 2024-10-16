@@ -1,7 +1,7 @@
 package com.trello25.domain.workspace.service;
 
 import com.trello25.domain.auth.dto.AuthUser;
-import com.trello25.domain.user.entity.User;
+import com.trello25.domain.common.entity.EntityStatus;
 import com.trello25.domain.user.enums.UserRole;
 import com.trello25.domain.workspace.dto.UpdateWorkspaceRequest;
 import com.trello25.domain.workspace.dto.WorkspaceRequest;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static com.trello25.domain.user.enums.UserRole.USER;
 
 @Service
 @RequiredArgsConstructor
@@ -57,12 +55,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         checkIfUserIsAuthorized(authUser);
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.WORKSPACE_NOT_FOUND));
         workspace.delete();
+        System.out.println(workspace.getStatus());
         Workspace saveWorkspace = workspaceRepository.save(workspace);
         return ResponseEntity.ok().body(saveWorkspace);
     }
 
-    public ResponseEntity<Void> getAllSpace() {
-        Workspace workspace = workspaceRepository.findAllSpace();
+    public List<Workspace> getActiveWorkspace() {
+        return  workspaceRepository.findByStatus(EntityStatus.ACTIVATED);
 
     }
 

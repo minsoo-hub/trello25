@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/workspaces")
 @RequiredArgsConstructor
@@ -42,8 +44,8 @@ public class WorkspaceController {
     }
 
     @GetMapping
-    public ResponseEntity<Void> getWorkspaces(){
-        return workspaceService.getAllSpace();
+    public List<Workspace> getWorkspaces(){
+        return workspaceService.getActiveWorkspace();
     }
 
 

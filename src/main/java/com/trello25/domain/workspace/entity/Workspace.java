@@ -34,6 +34,7 @@ public class Workspace extends BaseEntity {
     ){
         this.title = title;
         this.description = description;
+        this.status = EntityStatus.ACTIVATED;
     }
 
     public void update(String title, String description) {

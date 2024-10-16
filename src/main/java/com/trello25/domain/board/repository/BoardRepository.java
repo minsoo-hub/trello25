@@ -8,6 +8,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-
     List<Board> findByWorkspace_IdAndStatus(@Param("workspaceId") Long id, EntityStatus status);
 }

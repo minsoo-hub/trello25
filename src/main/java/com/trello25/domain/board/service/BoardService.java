@@ -1,25 +1,34 @@
 package com.trello25.domain.board.service;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.trello25.domain.board.dto.request.CreateBoardRequest;
 import com.trello25.domain.board.dto.request.UpdateBoardRequest;
 import com.trello25.domain.board.dto.response.BoardResponse;
 import com.trello25.domain.board.entity.Board;
 import com.trello25.domain.board.repository.BoardRepository;
-import com.trello25.domain.card.repository.CardRepository;
 import com.trello25.domain.common.entity.EntityStatus;
-import com.trello25.domain.kanban.repository.KanbanRepository;
+import com.trello25.domain.kanban.dto.response.KanbanResponse;
+import com.trello25.domain.kanban.service.KanbanService;
 import com.trello25.domain.member.entity.Member;
+import com.trello25.domain.member.entity.Permission;
 import com.trello25.domain.member.repository.MemberRepository;
-import com.trello25.domain.member.service.MemberService;
 import com.trello25.domain.workspace.entity.Workspace;
 import com.trello25.domain.workspace.repository.WorkspaceRepository;
 import com.trello25.exception.ApplicationException;
 import com.trello25.exception.ErrorCode;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -27,110 +36,89 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final WorkspaceRepository workspaceRepository;
-    private final MemberService memberService;
     private final MemberRepository memberRepository;
-    private final KanbanRepository kanbanRepository;
-    private final CardRepository cardRepository;
-//    private final KanbanService kanbanService;
+    private final KanbanService kanbanService;
 
-    public void createBoard(long id, CreateBoardRequest createBoardRequest) {
+    @Value("${cloud.aws.credentials.access-key}")
+    private String AWS_ACCESS_KEY;
+    @Value("${cloud.aws.credentials.secret-key}")
+    private String AWS_SECRET_KEY;
+    @Value("${cloud.aws.region.static}")
+    private String AWS_REGION;
+    @Value("${background.default.image}")
+    private String DEFAULT_IMAGE;
+
+    private AmazonS3 s3Client() {
+        //accesskey, secretkey 자격증명 만듬
+        BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
+        return AmazonS3ClientBuilder.standard()
+            .withRegion(AWS_REGION)
+            .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
+            .build();
+    }
+
+    public void createBoard(Long currentUserId, long id, CreateBoardRequest createBoardRequest) {
         //로그인 확인 여부 확인
 
         //워크스페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
-            .orElseThrow(()-> new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS));
+            .orElseThrow(()-> new ApplicationException(ErrorCode.LOGIN_REQUIRED));
 
         //워크스페이스 상태 확인
         if(workspace.getStatus() == EntityStatus.DELETED){
             throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
         }
 
-        // 현재 로그인한 사용자가 이 워크스페이스의 멤버인지 확인
-        List<Member> members = memberRepository.findByWorkspace_Id(workspace.getId());
+        // 멤버가 해당 워크스페이스에 속해 있는지 확인
+        Member member = getMemberByUserIdAndWorkspaceId(currentUserId, workspace);
 
-        if (members.isEmpty()) {
-            throw new ApplicationException(ErrorCode.MEMBER_NOT_FOUND); //워크스페이스에 멤버가 없는 경우
-        }
-
-//        // 현재 로그인한 사용자가 이 워크스페이스의 멤버인지 확인
-//        Member member = members.stream()
-//            .filter(m -> m.getUser().getId().equals(currentUser.getId()))  // 현재 사용자의 ID와 일치하는 멤버 찾기
-//            .findFirst()
-//            .orElseThrow(() -> new ApplicationException(ErrorCode.MEMBER_NOT_FOUND));  // 사용자가 해당 워크스페이스의 멤버가 아닌 경우
-//
-//        // 읽기 전용 권한 확인
-//        if (member.getPermission() == Permission.READ_ONLY) {
-//            throw new ApplicationException(ErrorCode.FORBIDDEN_READ_ONLY_USER);
-//        }
-
-        //제목 비어있는지 확인
-        if(createBoardRequest.getTitle() == null || createBoardRequest.getTitle().trim().isEmpty()){
-            throw new ApplicationException(ErrorCode.EMPTY_BOARD_TITLE);
-        }
+        // 읽기 전용 권한이 아닌지 확인
+        validateNotReadOnlyMember(member);
 
         //보드 생성
         Board board = new Board(
             createBoardRequest.getTitle(),
             createBoardRequest.getBackColor(),
-            createBoardRequest.getImagePath(),
+            DEFAULT_IMAGE,
             workspace);
 
         boardRepository.save(board);
     }
 
-    public void updateBoard(Long id, UpdateBoardRequest updateBoardRequest) {
+    public void updateBoard(Long currentUserId, Long id, UpdateBoardRequest updateBoardRequest) {
         // 보드 존재 여부 확인
-        Board board = boardRepository.findById(id)
-            .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
+        Board board = getBoardById(id);
 
-        //보드 상태 확인
-        if(board.getStatus() == EntityStatus.DELETED){
-            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
+        // 삭제된 보드인지 확인
+        validateDeletedBoard(board);
 
-//        // 보드에서 워크스페이스 정보 가져오기
-//        Workspace workspace = board.getWorkspace();
-//
-//        // 현재 로그인한 사용자의 ID를 가져오기 (유저 ID가 아니라 워크스페이스에 연결된 멤버를 확인할 것임)
-//        Long memberId = memberService.getLoggedInMemberId()
-//            .orElseThrow(() -> new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS));
-//
-//        // 멤버가 해당 워크스페이스에 속해 있는지 확인
-//        Member member = memberRepository.findByIdAndWorkspaceId(memberId, workspace.getId())
-//            .orElseThrow(() -> new ApplicationException(ErrorCode.MEMBER_NOT_FOUND));
-//
-//        // 읽기 전용 권한 확인
-//        if (member.getPermission() == Permission.READ_ONLY) {
-//            throw new ApplicationException(ErrorCode.FORBIDDEN_READ_ONLY_USER);
-//        }
+        // 보드의 워크스페이스 정보 가져오기
+        Workspace workspace = board.getWorkspace();
 
-        //제목 비어있는지 확인
-        if(updateBoardRequest.getTitle() == null || updateBoardRequest.getTitle().trim().isEmpty()){
-            throw new ApplicationException(ErrorCode.EMPTY_BOARD_TITLE);
-        }
+        // 멤버가 해당 워크스페이스에 속해 있는지 확인
+        Member member = getMemberByUserIdAndWorkspaceId(currentUserId, workspace);
+
+        // 읽기 전용 권한이 아닌지 확인
+        validateNotReadOnlyMember(member);
 
         //보드 수정
         board.updateBoard(updateBoardRequest.getTitle(),
-            updateBoardRequest.getBackColor(),
-            updateBoardRequest.getImagePath());
+            updateBoardRequest.getBackColor());
 
         boardRepository.save(board);
     }
 
     @Transactional(readOnly = true)
-    public java.util.List<BoardResponse> getBoardList(Long id) {
-        // 워크스페이스 존재 여부 확인
-        if(!workspaceRepository.existsById(id)){
-            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
+    public java.util.List<BoardResponse> getBoardList(Long currentUserId, Long id) {
+        //워크스페이스 있는지 확인
+        Workspace workspace = workspaceRepository.findById(id)
+            .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        // 유저가 해당 워크스페이스에 속해 있는지 확인
+         getMemberByUserIdAndWorkspaceId(currentUserId, workspace);
 
         // 보드 목록 조회
         java.util.List<Board> boards = boardRepository.findByWorkspace_IdAndStatus(id, EntityStatus.ACTIVATED);
-
-        // 보드 목록이 비어 있는 경우 확인
-        if(boards.isEmpty()){
-            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
 
         return boards.stream()
             .map(board -> new BoardResponse(
@@ -139,55 +127,129 @@ public class BoardService {
                 board.getTitle(),
                 board.getBackColor()
             ))
-            .collect(Collectors.toList());
+            .toList();
     }
 
-//    @Transactional(readOnly = true)
-//    public BoardResponse getBoard(Long id) {
-//        //보드 존재 여부 확인
-//        Board board = boardRepository.findById(id)
-//            .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
-//
-//        //보드 상태 확인
-//        if(board.getStatus() == EntityStatus.DELETED){
-//            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
-//        }
-//
-//        // 리스트 목록 조회
-//        java.util.List<KanbanResponse> kanbanResponses= kanbanService.getKanbans(board.getId());
-//
-//
-////        java.util.List<ListResponse> listResponseList = lists.stream()
-////            .map(ListResponse::new)
-////            .collect(Collectors.toList());
-////
-////        // 카드 목록 조회
-////        java.util.List<Card> cardList = cardRepository.findActiByBoardId(id);
-////
-////        java.util.List<CardResponse> cardResponseList = cardList.stream()
-////            .map(card -> new CardResponse(card))
-////            .collect(Collectors.toList());
-//
-//        return new BoardResponse(
-//            board.getId(),
-//            board.getTitle(),
-//            board.getBackColor(),
-//            kanbanResponses
-//         );
-//    }
 
-    public void deleteBoard(Long id) {
+    @Transactional(readOnly = true)
+    public BoardResponse getBoard(Long currentUserId, Long id) {
         // 보드 존재 여부 확인
-        Board board = boardRepository.findById(id)
+        Board board = getBoardById(id);
+
+        // 삭제된 보드인지 확인
+        validateDeletedBoard(board);
+
+        // 보드의 워크스페이스 정보 가져오기
+        Workspace workspace = board.getWorkspace();
+
+        // 멤버가 해당 워크스페이스에 속해 있는지 확인
+        getMemberByUserIdAndWorkspaceId(currentUserId, workspace);
+
+        // 칸반 목록 조회
+        java.util.List<KanbanResponse> kanbanResponses= kanbanService.getKanbans(board.getId());
+
+        return new BoardResponse(
+            board.getId(),
+            board.getWorkspace().getId(),
+            board.getTitle(),
+            board.getBackColor(),
+            kanbanResponses
+         );
+    }
+
+    private Board getBoardById(Long id) {
+        return boardRepository.findById(id)
             .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
+    }
 
-        //보드 상태 확인
-        if(board.getStatus() == EntityStatus.DELETED){
-            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
+    // 1. 로그인한 사용자가 해당 워크스페이스에 속해있는지 확인
+    // 2. 권한이 READ_ONLY면 불가능
 
-        //읽기 전용 권한 확인
+    public void deleteBoard(Long currentUserId, Long boardId) {
+        // 보드 존재 여부 확인
+        Board board = getBoardById(boardId);
+
+        // 삭제된 보드인지 확인
+        validateDeletedBoard(board);
+
+        // 보드의 워크스페이스 정보 가져오기
+        Workspace workspace = board.getWorkspace();
+
+        // 멤버가 해당 워크스페이스에 속해 있는지 확인
+        Member member = getMemberByUserIdAndWorkspaceId(currentUserId, workspace);
+
+        // 읽기 전용 권한이 아닌지 확인
+        validateNotReadOnlyMember(member);
 
         board.delete();
+        boardRepository.save(board);
+    }
+
+    private Member getMemberByUserIdAndWorkspaceId(Long currentUserId, Workspace workspace) {
+        return memberRepository.findByUser_IdAndWorkspace_Id(currentUserId, workspace.getId())
+            .orElseThrow(() -> new ApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    private boolean isReadOnlyMember(Member member) {
+        return Permission.READ_ONLY.equals(member.getPermission());
+    }
+
+    private void validateNotReadOnlyMember(Member member) {
+        if (isReadOnlyMember(member)) {
+            throw new ApplicationException(ErrorCode.FORBIDDEN_READ_ONLY_USER);
+        }
+    }
+
+    private boolean isDeletedBoard(Board board) {
+        return EntityStatus.DELETED.equals(board.getStatus());
+    }
+
+    private void validateDeletedBoard(Board board) {
+        if (isDeletedBoard(board)) {
+            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+    }
+
+    public void updateImage(Long currentUserId, Long boardId, MultipartFile file) throws IOException {
+        // 보드 존재 여부 확인
+        Board board = getBoardById(boardId);
+
+        // 삭제된 보드인지 확인
+        validateDeletedBoard(board);
+
+        // 보드의 워크스페이스 정보 가져오기
+        Workspace workspace = board.getWorkspace();
+
+        // 멤버가 해당 워크스페이스에 속해 있는지 확인
+        Member member = getMemberByUserIdAndWorkspaceId(currentUserId, workspace);
+
+        // 읽기 전용 권한 확인
+        validateNotReadOnlyMember(member);
+
+        // 이미지 바이트 코드 가져오기
+        InputStream imageInputStream = file.getInputStream();
+
+        // 사용자가 보낸 이미지 이름 -> board.originName
+        String originalFilename = file.getOriginalFilename();
+
+        // s3에 저장될 이미지 이름
+        UUID uuid = UUID.randomUUID();
+        String s3ImageName = uuid + getSubString(file);
+
+        // 메타 데이터
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(file.getContentType());
+
+        s3Client().putObject(new PutObjectRequest("nbc.trello", s3ImageName, imageInputStream, objectMetadata));
+        String urlPath = s3Client().getUrl("nbc.trello", s3ImageName).toString();
+
+        board.updateBackground(originalFilename, urlPath);
+        boardRepository.save(board);
+    }
+
+    private static String getSubString(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        int lastIndex = originalFilename.lastIndexOf("."); // 제일 마지막 .위치 가져오기
+        return originalFilename.substring(lastIndex); //.부터 글자 가져오기
     }
 }

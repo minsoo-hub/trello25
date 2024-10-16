@@ -12,6 +12,5 @@ public class UpdateBoardRequest {
     @NotNull
     private  String title;
     private BackColors backColor;
-    private String imagePath;
 
 }

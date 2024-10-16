@@ -41,6 +41,10 @@ public class Board extends BaseEntity {
     @Enumerated( EnumType.STRING)
     private BackColors backColor;
 
+    @Column
+    private String originImageName;
+
+    @Column
     private String imagePath;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,14 +61,18 @@ public class Board extends BaseEntity {
         this.workspace = workspace;
     }
 
-    public void updateBoard(String title, BackColors backColor, String imagePath) {
+    public void updateBoard(String title, BackColors backColor) {
         this.title = title;
-        this.imagePath = imagePath;
         this.backColor = backColor;
     }
 
     public void delete(){
         this.setStatus(EntityStatus.DELETED);
         kanbanList.forEach(Kanban::delete);
+    }
+
+    public void updateBackground(String originImageName, String imagePath) {
+        this.originImageName = originImageName;
+        this.imagePath = imagePath;
     }
 }

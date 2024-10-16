@@ -2,7 +2,9 @@ package com.trello25.domain.board.entity;
 
 import com.trello25.domain.board.enums.BackColors;
 import com.trello25.domain.common.entity.BaseEntity;
+import com.trello25.domain.common.entity.EntityStatus;
 import com.trello25.domain.workspace.entity.Workspace;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -23,19 +25,34 @@ public class Board extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String imagePath;
+
+    @Column(nullable = false)
+    private String title;
 
     @Enumerated( EnumType.STRING)
     private BackColors backColor;
+
+    private String imagePath;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
 
-    public Board(String imagePath, BackColors backColor, Workspace workspace) {
+
+    public Board(String title, BackColors backColor, String imagePath, Workspace workspace) {
+        this.title = title;
         this.imagePath = imagePath;
         this.backColor = backColor;
         this.workspace = workspace;
     }
 
+    public void updateBoard(String title, BackColors backColor, String imagePath) {
+        this.title = title;
+        this.imagePath = imagePath;
+        this.backColor = backColor;
+    }
+
+    public void delete(){
+        this.setStatus(EntityStatus.DELETED);
+    }
 }

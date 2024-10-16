@@ -11,18 +11,21 @@ public enum ErrorCode {
     INVALID_AUTH_REQUEST(HttpStatus.BAD_REQUEST, "유효하지 않은 인증 요청입니다."),
 
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다."),
-    
+
     UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "권한이 없습니다."),
-    
+
     INVALID_KANBAN_POSITION(HttpStatus.NOT_FOUND, "유효하지 않은 칸반 위치입니다."),
     WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 workspace입니다."),
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 보드입니다."),
     KANBAN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 칸반입니다."),
     KANBAN_POSITION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 칸반 순서입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
-  
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"멤버를 찾을 수 없습니다."),
+    INVALID_PERMISSION(HttpStatus.NOT_FOUND,"올바른 Permission을 입력해주세요"),
+
     EMAIL_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
-  
+
+
     private final HttpStatus httpStatus;
     private final String message;
 

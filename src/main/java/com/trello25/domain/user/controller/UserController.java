@@ -58,6 +58,7 @@ public class UserController {
         List<UserResponse> users = userService.getUsersByEmails(emails);
         return ResponseEntity.ok(users);
     }
+
     // 유저 삭제
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal AuthUser authUser, @PathVariable long id) {
@@ -69,3 +70,4 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
+

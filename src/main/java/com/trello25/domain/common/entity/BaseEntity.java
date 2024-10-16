@@ -32,4 +32,6 @@ public class BaseEntity {
     @Enumerated
     @Column(nullable = false)
     protected EntityStatus status = EntityStatus.ACTIVATED;
+
+
 }

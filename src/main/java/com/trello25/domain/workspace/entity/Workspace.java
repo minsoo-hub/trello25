@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name="worksapce")
+@Table(name="workspace")
 public class Workspace extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +36,7 @@ public class Workspace extends BaseEntity {
     ){
         this.title = title;
         this.description = description;
+        this.status = EntityStatus.ACTIVATED;
     }
 
     public void update(String title, String description) {

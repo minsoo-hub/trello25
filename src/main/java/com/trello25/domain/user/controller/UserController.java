@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -49,5 +52,10 @@ public class UserController {
         }
         userService.updateUserRole(id, userRoleChangeRequest);
         return ResponseEntity.noContent().build();
+    }
+    @PostMapping("/by-emails")
+    public ResponseEntity<List<UserResponse>> getUsersByEmails(@RequestBody List<String> emails) {
+        List<UserResponse> users = userService.getUsersByEmails(emails);
+        return ResponseEntity.ok(users);
     }
 }

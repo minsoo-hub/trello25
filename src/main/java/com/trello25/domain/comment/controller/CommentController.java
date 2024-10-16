@@ -4,10 +4,13 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.comment.dto.request.CreateCommentRequest;
+import com.trello25.domain.comment.dto.request.UpdateCommentContentRequest;
 import com.trello25.domain.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +28,15 @@ public class CommentController {
     ) {
         commentService.createComment(authUser, createCommentRequest);
         return ResponseEntity.status(CREATED).build();
+    }
+
+    @PatchMapping("/comments/{id}/content")
+    public ResponseEntity<Void> updateCommentContent(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable long id,
+            @RequestBody UpdateCommentContentRequest request
+    ) {
+        commentService.updateCommentContent(authUser, id, request);
+        return ResponseEntity.ok().build();
     }
 }

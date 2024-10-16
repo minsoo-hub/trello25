@@ -1,14 +1,17 @@
 package com.trello25.domain.comment.service;
 
 import static com.trello25.exception.ErrorCode.CARD_NOT_FOUND;
+import static com.trello25.exception.ErrorCode.COMMENT_NOT_FOUND;
 import static com.trello25.exception.ErrorCode.UNAUTHORIZED_ACCESS;
 
 import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.card.entity.Card;
 import com.trello25.domain.card.repository.CardRepository;
 import com.trello25.domain.comment.dto.request.CreateCommentRequest;
+import com.trello25.domain.comment.dto.request.UpdateCommentContentRequest;
 import com.trello25.domain.comment.entity.Comment;
 import com.trello25.domain.comment.repository.CommentRepository;
+import com.trello25.domain.common.entity.EntityStatus;
 import com.trello25.domain.member.entity.Member;
 import com.trello25.domain.member.entity.Permission;
 import com.trello25.domain.member.repository.MemberRepository;
@@ -38,5 +41,18 @@ public class CommentService {
 
         Comment comment = new Comment(card, request.getContent());
         commentRepository.save(comment);
+    }
+
+    public void updateCommentContent(AuthUser authUser, long commentId, UpdateCommentContentRequest request) {
+        Comment comment = commentRepository.findByIdAndStatus(commentId, EntityStatus.ACTIVATED)
+                .orElseThrow(() -> new ApplicationException(COMMENT_NOT_FOUND));
+
+        Member member = memberRepository.findMemberForCommentByCommentId(authUser.getId(), commentId)
+                .orElseThrow(() -> new ApplicationException(UNAUTHORIZED_ACCESS));
+        if (member.getPermission() == Permission.READ_ONLY) {
+            throw new ApplicationException(UNAUTHORIZED_ACCESS);
+        }
+
+        comment.updateContent(request.getContent());
     }
 }

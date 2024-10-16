@@ -3,6 +3,7 @@ package com.trello25.domain.kanban.service;
 import static com.trello25.exception.ErrorCode.BOARD_NOT_FOUND;
 import static com.trello25.exception.ErrorCode.KANBAN_NOT_FOUND;
 
+import com.trello25.common.SlackEvent;
 import com.trello25.domain.board.entity.Board;
 import com.trello25.domain.board.repository.BoardRepository;
 import com.trello25.domain.common.entity.EntityStatus;
@@ -12,6 +13,7 @@ import com.trello25.domain.kanban.dto.request.UpdateKanbanPositionRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanTitleRequest;
 import com.trello25.domain.kanban.dto.response.KanbanResponse;
 import com.trello25.domain.kanban.entity.Kanban;
+import com.trello25.domain.kanban.event.KanbanCreatedEvent;
 import com.trello25.domain.kanban.repository.KanbanRepository;
 import com.trello25.domain.kanbanposition.entity.KanbanPosition;
 import com.trello25.domain.kanbanposition.service.KanbanPositionService;
@@ -21,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,7 @@ public class KanbanService {
     private final BoardRepository boardRepository;
     private final KanbanRepository kanbanRepository;
     private final KanbanPositionService kanbanPositionService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void createKanban(AuthUser authUser, CreateKanbanRequest request) {
         // TODO: 칸반 생성 권한을 가지고 있는 멤버인지 확인 필요, 로그인 기능 구현 완료 시 수정예정
@@ -45,6 +49,8 @@ public class KanbanService {
         Kanban kanban = new Kanban(board, request.getTitle());
         kanbanRepository.save(kanban);
         kanbanPositionService.addKanban(kanban);
+
+        eventPublisher.publishEvent(new KanbanCreatedEvent("생성 완료"));
     }
 
     public void deleteKanban(AuthUser authUser, long id) {

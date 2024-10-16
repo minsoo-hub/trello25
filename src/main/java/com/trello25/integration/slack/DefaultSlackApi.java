@@ -1,9 +1,10 @@
-package com.trello25.client.slack;
+package com.trello25.integration.slack;
 
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
+import com.trello25.common.AppProfile;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,17 +12,19 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class SlackMessageSender {
+@AppProfile
+public class DefaultSlackApi implements SlackApi {
 
-    public static final String CHANNEL_NAME = "프로젝트";
+    private static final String CHANNEL_NAME = "프로젝트";
 
     private final MethodsClient methodsClient;
 
-    public SlackMessageSender(@Value(value = "${slack.token}") String slackToken) {
+    public DefaultSlackApi(@Value(value = "${slack.token}") String slackToken) {
         this.methodsClient = Slack.getInstance().methods(slackToken);
     }
 
-    public void sendMessage(String message) {
+    @Override
+    public void notify(String message) {
         try {
             ChatPostMessageRequest request = ChatPostMessageRequest.builder()
                     .channel(CHANNEL_NAME)

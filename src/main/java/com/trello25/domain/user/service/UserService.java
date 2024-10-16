@@ -28,9 +28,15 @@ public class UserService {
 
     // ID로 유저 조회
     public UserResponse getUser(long userId) {
-        return userRepository.findById(userId)
-                .map(user -> new UserResponse(user.getId(), user.getEmail(), user.getUserRole()))
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        // 상태가 ACTIVATED인 사용자만 조회
+        if (user.getStatus() != EntityStatus.ACTIVATED) {
+            throw new ApplicationException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        return new UserResponse(user.getId(), user.getEmail(), user.getUserRole());
     }
 
     // 이메일로 유저 조회 (카드에서 사용할 수 있는 기능)
@@ -65,11 +71,21 @@ public class UserService {
 
         user.updateRole(UserRole.of(request.getRole()));
     }
+
     public List<UserResponse> getUsersByEmails(List<String> emails) {
         // ACTIVATED 상태의 유저만 조회
         List<User> users = userRepository.findAllByEmailInAndStatus(emails, EntityStatus.ACTIVATED);
         return users.stream()
                 .map(user -> new UserResponse(user.getId(), user.getEmail(), user.getUserRole()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteUser(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        // 상태를 DELETED로 변경
+        user.setStatus(EntityStatus.DELETED);
     }
 }

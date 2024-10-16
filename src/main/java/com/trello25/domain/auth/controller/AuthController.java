@@ -18,17 +18,15 @@ public class AuthController {
 
     private final AuthService authService;
 
-    // 회원가입
     @PostMapping("/auth/signup")
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest signupRequest) {
         SignupResponse signupResponse = authService.signup(signupRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(signupResponse); // 201 Created로 상태 반환
+        return ResponseEntity.ok(signupResponse);
     }
 
-    // 로그인
     @PostMapping("/auth/signin")
     public ResponseEntity<SigninResponse> signin(@Valid @RequestBody SigninRequest signinRequest) {
         SigninResponse signinResponse = authService.signin(signinRequest);
-        return ResponseEntity.ok(signinResponse); // 200 OK로 상태 반환
+        return ResponseEntity.ok(signinResponse);
     }
 }

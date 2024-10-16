@@ -3,10 +3,11 @@ package com.trello25.domain.kanban.service;
 import static com.trello25.exception.ErrorCode.BOARD_NOT_FOUND;
 import static com.trello25.exception.ErrorCode.KANBAN_NOT_FOUND;
 
+import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.board.entity.Board;
 import com.trello25.domain.board.repository.BoardRepository;
 import com.trello25.domain.common.entity.EntityStatus;
-import com.trello25.domain.kanban.AuthUser;
+
 import com.trello25.domain.kanban.dto.request.CreateKanbanRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanPositionRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanTitleRequest;

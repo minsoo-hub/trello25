@@ -47,7 +47,7 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
 
-    @OneToMany(mappedBy = "kanban", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Kanban> kanbanList = new ArrayList<>();
 
     public Board(String title, BackColors backColor, String imagePath, Workspace workspace) {

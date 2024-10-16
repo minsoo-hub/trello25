@@ -7,9 +7,7 @@ import com.trello25.domain.board.entity.Board;
 import com.trello25.domain.board.repository.BoardRepository;
 import com.trello25.domain.card.repository.CardRepository;
 import com.trello25.domain.common.entity.EntityStatus;
-import com.trello25.domain.kanban.dto.response.KanbanResponse;
 import com.trello25.domain.kanban.repository.KanbanRepository;
-import com.trello25.domain.kanban.service.KanbanService;
 import com.trello25.domain.member.entity.Member;
 import com.trello25.domain.member.repository.MemberRepository;
 import com.trello25.domain.member.service.MemberService;
@@ -33,7 +31,7 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final KanbanRepository kanbanRepository;
     private final CardRepository cardRepository;
-    private final KanbanService kanbanService;
+//    private final KanbanService kanbanService;
 
     public void createBoard(long id, CreateBoardRequest createBoardRequest) {
         //로그인 확인 여부 확인
@@ -48,7 +46,7 @@ public class BoardService {
         }
 
         // 현재 로그인한 사용자가 이 워크스페이스의 멤버인지 확인
-        List<Member> members = memberRepository.findByWorkspaceId(workspace.getId());
+        List<Member> members = memberRepository.findByWorkspace_Id(workspace.getId());
 
         if (members.isEmpty()) {
             throw new ApplicationException(ErrorCode.MEMBER_NOT_FOUND); //워크스페이스에 멤버가 없는 경우
@@ -127,7 +125,7 @@ public class BoardService {
         }
 
         // 보드 목록 조회
-        java.util.List<Board> boards = boardRepository.findByWorkspaceIdAndStatus(id, EntityStatus.ACTIVATED);
+        java.util.List<Board> boards = boardRepository.findByWorkspace_IdAndStatus(id, EntityStatus.ACTIVATED);
 
         // 보드 목록이 비어 있는 경우 확인
         if(boards.isEmpty()){
@@ -144,39 +142,39 @@ public class BoardService {
             .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public BoardResponse getBoard(Long id) {
-        //보드 존재 여부 확인
-        Board board = boardRepository.findById(id)
-            .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
-
-        //보드 상태 확인
-        if(board.getStatus() == EntityStatus.DELETED){
-            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
-
-        // 리스트 목록 조회
-        java.util.List<KanbanResponse> kanbanResponses= kanbanService.getKanbans(board.getId());
-
-
-//        java.util.List<ListResponse> listResponseList = lists.stream()
-//            .map(ListResponse::new)
-//            .collect(Collectors.toList());
+//    @Transactional(readOnly = true)
+//    public BoardResponse getBoard(Long id) {
+//        //보드 존재 여부 확인
+//        Board board = boardRepository.findById(id)
+//            .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
 //
-//        // 카드 목록 조회
-//        java.util.List<Card> cardList = cardRepository.findActiByBoardId(id);
+//        //보드 상태 확인
+//        if(board.getStatus() == EntityStatus.DELETED){
+//            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
+//        }
 //
-//        java.util.List<CardResponse> cardResponseList = cardList.stream()
-//            .map(card -> new CardResponse(card))
-//            .collect(Collectors.toList());
-
-        return new BoardResponse(
-            board.getId(),
-            board.getTitle(),
-            board.getBackColor(),
-            kanbanResponses
-         );
-    }
+//        // 리스트 목록 조회
+//        java.util.List<KanbanResponse> kanbanResponses= kanbanService.getKanbans(board.getId());
+//
+//
+////        java.util.List<ListResponse> listResponseList = lists.stream()
+////            .map(ListResponse::new)
+////            .collect(Collectors.toList());
+////
+////        // 카드 목록 조회
+////        java.util.List<Card> cardList = cardRepository.findActiByBoardId(id);
+////
+////        java.util.List<CardResponse> cardResponseList = cardList.stream()
+////            .map(card -> new CardResponse(card))
+////            .collect(Collectors.toList());
+//
+//        return new BoardResponse(
+//            board.getId(),
+//            board.getTitle(),
+//            board.getBackColor(),
+//            kanbanResponses
+//         );
+//    }
 
     public void deleteBoard(Long id) {
         // 보드 존재 여부 확인

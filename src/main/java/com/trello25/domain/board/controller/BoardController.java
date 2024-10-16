@@ -58,16 +58,16 @@ public class BoardController {
         return responseList;
     }
 
-    /**
-     * 보드 단건 조회
-     * @param id
-     * @return
-     */
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/boards/{id}")
-    public BoardResponse getBoard(@PathVariable Long id){
-        return boardService.getBoard(id);
-    }
+//    /**
+//     * 보드 단건 조회
+//     * @param id
+//     * @return
+//     */
+//    @ResponseStatus(HttpStatus.OK)
+//    @GetMapping("/boards/{id}")
+//    public BoardResponse getBoard(@PathVariable Long id){
+//        return boardService.getBoard(id);
+//    }
 
     /**
      * 보드 삭제

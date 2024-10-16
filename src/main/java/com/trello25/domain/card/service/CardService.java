@@ -1,6 +1,8 @@
 package com.trello25.domain.card.service;
 
-import com.trello25.domain.auth.dto.AuthUser;
+
+
+
 import com.trello25.domain.card.dto.request.CreateCardRequest;
 import com.trello25.domain.card.dto.request.DeleteCardRequest;
 import com.trello25.domain.card.dto.request.UpdateCardRequest;
@@ -19,8 +21,6 @@ import com.trello25.domain.manager.entity.Manager;
 import com.trello25.domain.member.entity.Member;
 import com.trello25.domain.member.entity.Permission;
 import com.trello25.domain.member.repository.MemberRepository;
-
-
 import com.trello25.exception.ApplicationException;
 import com.trello25.exception.ErrorCode;
 import java.time.LocalDateTime;
@@ -75,7 +75,7 @@ public class CardService {
 
     public void updateCard(Long id, UpdateCardRequest updateCardRequest) {
 
-        var card = cardRepository.findByIdAndStatusOrThrow(id, EntityStatus.ACTIVATED);
+        Card card = cardRepository.findByIdAndStatusOrThrow(id, EntityStatus.ACTIVATED);
 
         Member author = memberRepository.findByIdAndStatusOrThrow(updateCardRequest.getMemberId(),
                 EntityStatus.ACTIVATED);

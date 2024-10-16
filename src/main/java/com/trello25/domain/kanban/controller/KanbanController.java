@@ -1,6 +1,6 @@
 package com.trello25.domain.kanban.controller;
 
-import com.trello25.domain.kanban.AuthUser;
+import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.kanban.dto.request.CreateKanbanRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanPositionRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanTitleRequest;
@@ -31,8 +31,6 @@ public class KanbanController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody CreateKanbanRequest request
     ) {
-        // TODO: 로그인 코드 완성되면 수정 필요
-
         kanbanService.createKanban(authUser, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -41,8 +39,6 @@ public class KanbanController {
 
     @DeleteMapping("/kanbans/{id}")
     public ResponseEntity<Void> deleteKanban(@AuthenticationPrincipal AuthUser authUser, @PathVariable long id) {
-        // TODO: 로그인 코드 완성되면 수정 필요
-
         kanbanService.deleteKanban(authUser, id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
@@ -55,8 +51,6 @@ public class KanbanController {
             @PathVariable long id,
             @RequestBody UpdateKanbanTitleRequest request
     ) {
-        // TODO: 로그인 코드 완성되면 수정 필요
-
         kanbanService.updateKanbanTitle(authUser, id, request);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -69,8 +63,6 @@ public class KanbanController {
             @PathVariable long id,
             @RequestBody UpdateKanbanPositionRequest request
     ) {
-        // TODO: 로그인 코드 완성되면 수정 필요
-
         kanbanService.updateKanbanPosition(authUser, id, request);
 
         return ResponseEntity.status(HttpStatus.OK)

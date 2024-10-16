@@ -23,7 +23,6 @@ public class Workspace extends BaseEntity {
     private String title;
     private String description;
 
-
     @OneToMany(mappedBy = "workspace", fetch = FetchType.EAGER)
     private List<Board> boards = new ArrayList<>();
 

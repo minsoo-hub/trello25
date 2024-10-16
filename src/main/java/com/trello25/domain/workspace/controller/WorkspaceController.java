@@ -19,20 +19,17 @@ public class WorkspaceController {
 
     @PostMapping
     public ResponseEntity<Void> createWorkspace(
-            AuthUser authUser,
-            @RequestBody WorkspaceRequest request
+            //token나오면 principle
+            @RequestBody WorkspaceRequest request, AuthUser authUser
     ){
-        System.out.println(authUser.getUserRole());
-        workspaceService.create(authUser, request);
+        ResponseEntity<Void> result = workspaceService.create(authUser, request);
        return  ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Workspace> updateWorkspace(
             @PathVariable Long id,
-            @RequestBody UpdateWorkspaceRequest request,
-            AuthUser authUser
-            
+            @RequestBody UpdateWorkspaceRequest request, AuthUser authUser
     ){
         return workspaceService.update(id, request, authUser);
 

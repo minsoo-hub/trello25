@@ -1,5 +1,6 @@
 package com.trello25.domain.user.enums;
 
+
 import com.trello25.exception.ApplicationException;
 import com.trello25.exception.ErrorCode;
 

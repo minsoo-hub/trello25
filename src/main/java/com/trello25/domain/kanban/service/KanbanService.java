@@ -5,8 +5,9 @@ import static com.trello25.exception.ErrorCode.KANBAN_NOT_FOUND;
 
 import com.trello25.domain.board.entity.Board;
 import com.trello25.domain.board.repository.BoardRepository;
+import com.trello25.domain.card.dto.response.CardResponse;
+import com.trello25.domain.card.repository.CardRepository;
 import com.trello25.domain.common.entity.EntityStatus;
-import com.trello25.domain.kanban.AuthUser;
 import com.trello25.domain.kanban.dto.request.CreateKanbanRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanPositionRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanTitleRequest;
@@ -32,6 +33,7 @@ public class KanbanService {
     private final BoardRepository boardRepository;
     private final KanbanRepository kanbanRepository;
     private final KanbanPositionService kanbanPositionService;
+    private final CardRepository cardRepository;
 
     public void createKanban(AuthUser authUser, CreateKanbanRequest request) {
         // TODO: 칸반 생성 권한을 가지고 있는 멤버인지 확인 필요, 로그인 기능 구현 완료 시 수정예정
@@ -86,7 +88,12 @@ public class KanbanService {
 
         return kanbans.stream()
                 .sorted(Comparator.comparingInt(o -> positionMap.get(o.getId())))
-                .map(kanban -> new KanbanResponse(kanban.getId(), kanban.getTitle()))
+                .map(kanban -> {
+                    List<CardResponse> cardResponses = cardRepository.findAllByKanban(kanban).stream()
+                            .map(CardResponse::new)
+                            .toList();
+                    return new KanbanResponse(kanban, cardResponses);
+                })
                 .toList();
     }
 }

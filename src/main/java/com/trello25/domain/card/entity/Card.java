@@ -28,7 +28,7 @@ public class Card extends BaseEntity {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "list_id", nullable = false)
+    @JoinColumn(name = "kanban_id", nullable = false)
     private Kanban kanban;
 
     public Card(String title, String description, LocalDateTime deadline, Kanban kanban) {

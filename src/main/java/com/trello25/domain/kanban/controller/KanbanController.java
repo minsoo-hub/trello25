@@ -1,7 +1,6 @@
 package com.trello25.domain.kanban.controller;
 
-
-import com.trello25.domain.auth.dto.AuthUser;
+import com.trello25.domain.kanban.AuthUser;
 import com.trello25.domain.kanban.dto.request.CreateKanbanRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanPositionRequest;
 import com.trello25.domain.kanban.dto.request.UpdateKanbanTitleRequest;
@@ -82,6 +81,4 @@ public class KanbanController {
     public ResponseEntity<List<KanbanResponse>> getKanbans(@RequestParam long boardId) {
         return ResponseEntity.ok(kanbanService.getKanbans(boardId));
     }
-
-
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,11 +29,11 @@ public class KanbanController {
 
     @PostMapping("/kanbans")
     public ResponseEntity<Void> createKanban(
+            @AuthenticationPrincipal AuthUser authUser,
             @RequestBody CreateKanbanRequest request
     ) {
         // TODO: 로그인 코드 완성되면 수정 필요
 
-        AuthUser authUser = new AuthUser();
         kanbanService.createKanban(authUser, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -40,10 +41,9 @@ public class KanbanController {
     }
 
     @DeleteMapping("/kanbans/{id}")
-    public ResponseEntity<Void> deleteKanban(@PathVariable long id) {
+    public ResponseEntity<Void> deleteKanban(@AuthenticationPrincipal AuthUser authUser, @PathVariable long id) {
         // TODO: 로그인 코드 완성되면 수정 필요
 
-        AuthUser authUser = new AuthUser();
         kanbanService.deleteKanban(authUser, id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
@@ -52,12 +52,12 @@ public class KanbanController {
 
     @PatchMapping("/kanbans/{id}/title")
     public ResponseEntity<Void> updateKanbanTitle(
+            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable long id,
             @RequestBody UpdateKanbanTitleRequest request
     ) {
         // TODO: 로그인 코드 완성되면 수정 필요
 
-        AuthUser authUser = new AuthUser();
         kanbanService.updateKanbanTitle(authUser, id, request);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -66,12 +66,12 @@ public class KanbanController {
 
     @PatchMapping("/kanbans/{id}/position")
     public ResponseEntity<Void> updateKanbanPosition(
+            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable long id,
             @RequestBody UpdateKanbanPositionRequest request
     ) {
         // TODO: 로그인 코드 완성되면 수정 필요
 
-        AuthUser authUser = new AuthUser();
         kanbanService.updateKanbanPosition(authUser, id, request);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -82,6 +82,4 @@ public class KanbanController {
     public ResponseEntity<List<KanbanResponse>> getKanbans(@RequestParam long boardId) {
         return ResponseEntity.ok(kanbanService.getKanbans(boardId));
     }
-
-
 }

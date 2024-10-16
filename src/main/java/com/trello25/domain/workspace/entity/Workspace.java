@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name="worksapce")
+@Table(name="workspace")
 public class Workspace extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

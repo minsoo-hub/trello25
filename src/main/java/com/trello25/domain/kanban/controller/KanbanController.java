@@ -28,45 +28,53 @@ public class KanbanController {
 
     @PostMapping("/kanbans")
     public ResponseEntity<Void> createKanban(
-            @AuthenticationPrincipal AuthUser authUser,
-            @RequestBody CreateKanbanRequest request
+        @AuthenticationPrincipal AuthUser authUser,
+        @RequestBody CreateKanbanRequest request
     ) {
+        // TODO: 로그인 코드 완성되면 수정 필요
+
         kanbanService.createKanban(authUser, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
+            .build();
     }
 
     @DeleteMapping("/kanbans/{id}")
     public ResponseEntity<Void> deleteKanban(@AuthenticationPrincipal AuthUser authUser, @PathVariable long id) {
+        // TODO: 로그인 코드 완성되면 수정 필요
+
         kanbanService.deleteKanban(authUser, id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .build();
+            .build();
     }
 
     @PatchMapping("/kanbans/{id}/title")
     public ResponseEntity<Void> updateKanbanTitle(
-            @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable long id,
-            @RequestBody UpdateKanbanTitleRequest request
+        @AuthenticationPrincipal AuthUser authUser,
+        @PathVariable long id,
+        @RequestBody UpdateKanbanTitleRequest request
     ) {
+        // TODO: 로그인 코드 완성되면 수정 필요
+
         kanbanService.updateKanbanTitle(authUser, id, request);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .build();
+            .build();
     }
 
     @PatchMapping("/kanbans/{id}/position")
     public ResponseEntity<Void> updateKanbanPosition(
-            @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable long id,
-            @RequestBody UpdateKanbanPositionRequest request
+        @AuthenticationPrincipal AuthUser authUser,
+        @PathVariable long id,
+        @RequestBody UpdateKanbanPositionRequest request
     ) {
+        // TODO: 로그인 코드 완성되면 수정 필요
+
         kanbanService.updateKanbanPosition(authUser, id, request);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .build();
+            .build();
     }
 
     @GetMapping("/kanbans")

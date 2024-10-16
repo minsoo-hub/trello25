@@ -2,8 +2,6 @@ package com.trello25.domain.kanban.service;
 
 import static com.trello25.exception.ErrorCode.BOARD_NOT_FOUND;
 import static com.trello25.exception.ErrorCode.KANBAN_NOT_FOUND;
-import static com.trello25.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.trello25.exception.ErrorCode.UNAUTHORIZED_ACCESS;
 
 import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.board.entity.Board;
@@ -19,9 +17,6 @@ import com.trello25.domain.kanban.entity.Kanban;
 import com.trello25.domain.kanban.repository.KanbanRepository;
 import com.trello25.domain.kanbanposition.entity.KanbanPosition;
 import com.trello25.domain.kanbanposition.service.KanbanPositionService;
-import com.trello25.domain.member.entity.Member;
-import com.trello25.domain.member.entity.Permission;
-import com.trello25.domain.member.repository.MemberRepository;
 import com.trello25.exception.ApplicationException;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -40,17 +35,12 @@ public class KanbanService {
     private final KanbanRepository kanbanRepository;
     private final KanbanPositionService kanbanPositionService;
     private final CardRepository cardRepository;
-    private final MemberRepository memberRepository;
 
     public void createKanban(AuthUser authUser, CreateKanbanRequest request) {
-        Member member = memberRepository.findMemberForKanbanByBoardId(authUser.getId(), request.getBoardId())
-                .orElseThrow(() -> new ApplicationException(MEMBER_NOT_FOUND));
-        if (member.getPermission() == Permission.READ_ONLY) {
-            throw new ApplicationException(UNAUTHORIZED_ACCESS);
-        }
+        // TODO: 칸반 생성 권한을 가지고 있는 멤버인지 확인 필요, 로그인 기능 구현 완료 시 수정예정
 
         Board board = boardRepository.findById(request.getBoardId())
-                .orElseThrow(() -> new ApplicationException(BOARD_NOT_FOUND));
+            .orElseThrow(() -> new ApplicationException(BOARD_NOT_FOUND));
         if (board.getStatus() == EntityStatus.DELETED) {
             throw new ApplicationException(BOARD_NOT_FOUND);
         }
@@ -60,43 +50,28 @@ public class KanbanService {
         kanbanPositionService.addKanban(kanban);
     }
 
-    public void deleteKanban(AuthUser authUser, long kanbanId) {
-        Kanban kanban = kanbanRepository.findByIdAndStatus(kanbanId, EntityStatus.ACTIVATED)
-                .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
+    public void deleteKanban(AuthUser authUser, long id) {
+        // TODO: 칸반 삭제 권한을 가지고 있는 멤버인지 확인 필요, 로그인 기능 구현 완료 시 수정예정
 
-        Member member = memberRepository.findMemberForKanbanByKanbanId(authUser.getId(), kanbanId)
-                .orElseThrow(() -> new ApplicationException(MEMBER_NOT_FOUND));
-        if (member.getPermission() == Permission.READ_ONLY) {
-            throw new ApplicationException(UNAUTHORIZED_ACCESS);
-        }
-
+        Kanban kanban = kanbanRepository.findByIdAndStatus(id, EntityStatus.ACTIVATED)
+            .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
         kanban.delete();
         kanbanPositionService.deleteKanban(kanban);
     }
 
-    public void updateKanbanTitle(AuthUser authUser, long kanbanId, UpdateKanbanTitleRequest request) {
-        Kanban kanban = kanbanRepository.findByIdAndStatus(kanbanId, EntityStatus.ACTIVATED)
-                .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
+    public void updateKanbanTitle(AuthUser authUser, long id, UpdateKanbanTitleRequest request) {
+        // TODO: 칸반 수정 권한을 가지고 있는 멤버인지 확인 필요, 로그인 기능 구현 완료 시 수정예정
 
-        Member member = memberRepository.findMemberForKanbanByKanbanId(authUser.getId(), kanbanId)
-                .orElseThrow(() -> new ApplicationException(MEMBER_NOT_FOUND));
-        if (member.getPermission() == Permission.READ_ONLY) {
-            throw new ApplicationException(UNAUTHORIZED_ACCESS);
-        }
-
+        Kanban kanban = kanbanRepository.findByIdAndStatus(id, EntityStatus.ACTIVATED)
+            .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
         kanban.updateTitle(request.getTitle());
     }
 
-    public void updateKanbanPosition(AuthUser authUser, long kanbanId, UpdateKanbanPositionRequest request) {
-        Kanban kanban = kanbanRepository.findByIdAndStatus(kanbanId, EntityStatus.ACTIVATED)
-                .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
+    public void updateKanbanPosition(AuthUser authUser, long id, UpdateKanbanPositionRequest request) {
+        // TODO: 칸반 수정 권한을 가지고 있는 멤버인지 확인 필요, 로그인 기능 구현 완료 시 수정예정
 
-        Member member = memberRepository.findMemberForKanbanByKanbanId(authUser.getId(), kanbanId)
-                .orElseThrow(() -> new ApplicationException(MEMBER_NOT_FOUND));
-        if (member.getPermission() == Permission.READ_ONLY) {
-            throw new ApplicationException(UNAUTHORIZED_ACCESS);
-        }
-
+        Kanban kanban = kanbanRepository.findByIdAndStatus(id, EntityStatus.ACTIVATED)
+            .orElseThrow(() -> new ApplicationException(KANBAN_NOT_FOUND));
         kanbanPositionService.updateKanbanPosition(kanban, request.getPosition());
     }
 
@@ -113,13 +88,13 @@ public class KanbanService {
         }
 
         return kanbans.stream()
-                .sorted(Comparator.comparingInt(o -> positionMap.get(o.getId())))
-                .map(kanban -> {
-                    List<CardResponse> cardResponses = cardRepository.findAllByKanban(kanban).stream()
-                            .map(CardResponse::new)
-                            .toList();
-                    return new KanbanResponse(kanban, cardResponses);
-                })
-                .toList();
+            .sorted(Comparator.comparingInt(o -> positionMap.get(o.getId())))
+            .map(kanban -> {
+                List<CardResponse> cardResponses = cardRepository.findAllByKanban(kanban).stream()
+                    .map(CardResponse::new)
+                    .toList();
+                return new KanbanResponse(kanban, cardResponses);
+            })
+            .toList();
     }
 }

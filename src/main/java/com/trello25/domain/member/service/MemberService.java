@@ -32,6 +32,9 @@ public class MemberService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
+//        // 사용자 ID와 워크스페이스 ID로 멤버 조회
+//        Member member = memberRepository.findByUser_IdAndWorkspace_Id(user.getId(), id)
+//            .orElseThrow(() -> new ApplicationException(ErrorCode.MEMBER_NOT_FOUND));
 
         Member member = new Member();
         member.setWorkspace(workspace);
@@ -70,6 +73,5 @@ public class MemberService {
         }
         return false;
     }
-
 
 }

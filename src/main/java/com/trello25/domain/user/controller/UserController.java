@@ -58,5 +58,16 @@ public class UserController {
         List<UserResponse> users = userService.getUsersByEmails(emails);
         return ResponseEntity.ok(users);
     }
+
+    // 유저 삭제
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal AuthUser authUser, @PathVariable long id) {
+        // 본인 확인 또는 관리자 권한 확인
+        if (!authUser.getId().equals(id) && !authUser.getUserRole().equals(UserRole.ADMIN)) {
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
 }
 

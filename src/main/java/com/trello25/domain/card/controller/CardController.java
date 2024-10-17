@@ -7,11 +7,13 @@ import com.trello25.domain.card.dto.request.CreateCardRequest;
 import com.trello25.domain.card.dto.request.DeleteCardRequest;
 import com.trello25.domain.card.dto.request.UpdateCardRequest;
 import com.trello25.domain.card.dto.response.CardDetailResponse;
-import com.trello25.domain.card.dto.response.CardDetailResponse;
+import com.trello25.domain.card.dto.response.SearchCardResponse;
 import com.trello25.domain.card.service.CardService;
-import lombok.RequiredArgsConstructor;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,7 +79,7 @@ public class CardController {
         @RequestParam("memberId") Long memberId,
         @RequestParam("file") MultipartFile file
        ) throws IOException {
-        cardService.attachFile(authUser.getId(), id,memberId, file);
+        cardService.attachFile(authUser.getId(), id, file);
     }
 
     /**
@@ -84,7 +87,7 @@ public class CardController {
      * @param id
      * @return
      */
-    @GetMapping("/cards/{Id}/attachments")
+    @GetMapping("/cards/{id}/attachments")
     public List<AttachmentResponse> getAttachments(@PathVariable Long id) {
         return cardService.getAttachmentsByCardId(id);
     }

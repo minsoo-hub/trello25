@@ -28,10 +28,9 @@ import com.trello25.domain.member.entity.Permission;
 import com.trello25.domain.member.repository.MemberRepository;
 import com.trello25.exception.ApplicationException;
 import com.trello25.exception.ErrorCode;
-import java.time.LocalDate;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -182,7 +181,7 @@ public class CardService {
     }
 
     //파일 첨부
-    public void attachFile(Long currentUserId, Long cardId,Long memberId, MultipartFile file) throws IOException{
+    public void attachFile(Long cardId,Long memberId, MultipartFile file) throws IOException{
         // 읽기 권한 확인
         Member author = memberRepository.findByIdAndStatusOrThrow(memberId,
             EntityStatus.ACTIVATED);

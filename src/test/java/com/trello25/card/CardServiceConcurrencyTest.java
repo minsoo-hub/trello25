@@ -31,6 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -91,14 +92,14 @@ public class CardServiceConcurrencyTest {
         Kanban testKanban = new Kanban(testBoard, "Test Kanban");
         kanbanRepository.save(testKanban);  // Kanban 저장
 
-        testCard= new Card("Card", "Test description", LocalDateTime.now(), testKanban);
+        testCard= new Card("Card", "Test description", LocalDate.now(), testKanban);
         cardRepository.save(testCard);  //Card저장
     }
 
     @Test
     public void 동시성_카드_업데이트_테스트_락_적용_전() throws InterruptedException, ExecutionException {
-        UpdateCardRequest updateRequest1 = new UpdateCardRequest(testMember.getId(), "Updated Title 1", "Updated Description 1", LocalDateTime.now().plusDays(1), null);
-        UpdateCardRequest updateRequest2 = new UpdateCardRequest(testMember.getId(), "Updated Title 2", "Updated Description 2", LocalDateTime.now().plusDays(2), null);
+        UpdateCardRequest updateRequest1 = new UpdateCardRequest(testMember.getId(), "Updated Title 1", "Updated Description 1", LocalDate.now().plusDays(1), null);
+        UpdateCardRequest updateRequest2 = new UpdateCardRequest(testMember.getId(), "Updated Title 2", "Updated Description 2", LocalDate.now().plusDays(2), null);
 
         // 두 개의 동시성 작업 실행
         Callable<Void> task1 = () -> {

@@ -228,7 +228,7 @@ public class BoardService {
         boardRepository.save(board);
     }
 
-    private static String getSubString(MultipartFile file) {
+    private String getSubString(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         int lastIndex = originalFilename.lastIndexOf("."); // 제일 마지막 .위치 가져오기
         return originalFilename.substring(lastIndex); //.부터 글자 가져오기

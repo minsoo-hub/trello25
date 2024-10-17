@@ -1,8 +1,12 @@
 package com.trello25.domain.card.service;
 
 
-
-
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.trello25.domain.attachment.dto.response.AttachmentResponse;
+import com.trello25.domain.attachment.entity.Attachment;
+import com.trello25.domain.attachment.repository.AttachmentRepository;
 import com.trello25.domain.card.dto.request.CreateCardRequest;
 import com.trello25.domain.card.dto.request.DeleteCardRequest;
 import com.trello25.domain.card.dto.request.UpdateCardRequest;
@@ -25,17 +29,22 @@ import com.trello25.domain.member.repository.MemberRepository;
 import com.trello25.exception.ApplicationException;
 import com.trello25.exception.ErrorCode;
 import java.time.LocalDate;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CardService {
 
@@ -43,6 +52,8 @@ public class CardService {
     private final KanbanRepository kanbanRepository;
     private final MemberRepository memberRepository;
     private final CardActiveRepository cardActiveRepository;
+    private final AmazonS3 s3Client;
+    private final AttachmentRepository attachmentRepository;
 
     public void createCard(CreateCardRequest createCardRequest) {
 
@@ -169,4 +180,100 @@ public class CardService {
         return cardRepository.findCardsByConditions(id,title,description,deadline,pageable);
 
     }
+
+    //파일 첨부
+    public void attachFile(Long currentUserId, Long cardId,Long memberId, MultipartFile file) throws IOException{
+        // 읽기 권한 확인
+        Member author = memberRepository.findByIdAndStatusOrThrow(memberId,
+            EntityStatus.ACTIVATED);
+
+        if (author.getPermission().equals(Permission.READ_ONLY)) {
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
+        // 이미지 바이트 코드 가져오기
+        InputStream imageInputStream = file.getInputStream();
+
+        // 사용자가 보낸 파일 이름 -> board.originName
+        String originalFileName = file.getOriginalFilename();
+
+        // s3에 저장될 파일 이름
+        UUID uuid = UUID.randomUUID();
+        String subString = getSubString(file);
+
+        // 지원되는 파일 형식 확인 (이미지: jpg, png, 문서: pdf, csv)
+        if (!isValidFileType(subString)) {
+            throw new ApplicationException(ErrorCode.INVALID_FILE_TYPE);
+        }
+
+        // S3에 저장될 파일 이름 생성
+        String s3FileName = uuid + getSubString(file);
+
+        // 메타 데이터
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(file.getContentType());
+
+        // S3에 파일 업로드
+        s3Client.putObject(new PutObjectRequest("nbc.trello", s3FileName, imageInputStream, objectMetadata));
+
+        // s3 url 생성
+        String urlPath = s3Client.getUrl("nbc.trello", s3FileName).toString();
+
+        // cardId로 Card 객체 조회
+        Card card = cardRepository.findById(cardId)
+            .orElseThrow(() -> new ApplicationException(ErrorCode.CARD_NOT_FOUND));
+
+        Attachment attachment = new Attachment(originalFileName, urlPath, card);
+        attachmentRepository.save(attachment);
+
+    }
+
+    //파일 첨부 목록 조회
+    public List<AttachmentResponse> getAttachmentsByCardId(Long cardId){
+        //cardId로 Card 객체 조회
+        Card card = cardRepository.findById(cardId)
+            .orElseThrow(()-> new ApplicationException(ErrorCode.CARD_NOT_FOUND));
+
+        // 카드에 속한 첨부파일 목록 조회
+        List<Attachment> attachmentList = attachmentRepository.findAllByCard(card);
+
+        return attachmentList.stream()
+            .map(attachment -> new AttachmentResponse(attachment.getOriginalFileName(), attachment.getUrlPath()))
+            .toList();
+    }
+
+    public void deleteAttachment(Long attachmentId, Long memberId){
+        // 읽기 권한 확인
+        Member author = memberRepository.findByIdAndStatusOrThrow(memberId,
+            EntityStatus.ACTIVATED);
+
+        if (author.getPermission().equals(Permission.READ_ONLY)) {
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
+        //attachmentId로 첨부파일 객체 조회
+        Attachment attachment = attachmentRepository.findById(attachmentId)
+            .orElseThrow(()-> new ApplicationException(ErrorCode.ATTACHMENT_NOT_FOUND));
+
+        //s3에서 파일 삭제
+        String s3FileName = attachment.getUrlPath().substring(attachment.getUrlPath().lastIndexOf("/")+1);
+        s3Client.deleteObject("nbc.trello", s3FileName);
+
+        // 데이터베이스에서 첨부파일 삭제
+        attachmentRepository.delete(attachment);
+    }
+
+    private String getSubString(MultipartFile file) {
+        String originalFileName = file.getOriginalFilename();
+        int lastIndex = originalFileName.lastIndexOf("."); // 제일 마지막 .위치 가져오기
+        return originalFileName.substring(lastIndex); //.부터 글자 가져오기
+    }
+
+    // 지원되는 파일 형식 확인 메서드
+    private boolean isValidFileType(String fileExtension) {
+        // 지원되는 파일 확장자 목록
+        List<String> validExtensions = Arrays.asList(".jpg", ".png", ".pdf", ".csv");
+        return validExtensions.contains(fileExtension.toLowerCase());
+    }
+
 }

@@ -1,18 +1,17 @@
 package com.trello25.domain.card.controller;
 
 
+import com.trello25.domain.attachment.dto.response.AttachmentResponse;
 import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.card.dto.request.CreateCardRequest;
 import com.trello25.domain.card.dto.request.DeleteCardRequest;
-import com.trello25.domain.card.dto.response.CardDetailResponse;
 import com.trello25.domain.card.dto.request.UpdateCardRequest;
-import com.trello25.domain.card.dto.response.SearchCardResponse;
+import com.trello25.domain.card.dto.response.CardDetailResponse;
+import com.trello25.domain.card.dto.response.CardDetailResponse;
 import com.trello25.domain.card.service.CardService;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import java.io.IOException;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,8 +20,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,4 +60,43 @@ public class CardController {
     ) {
         return ResponseEntity.ok(cardService.getCardsByConditions(id,title,description,deadline,page,size));
     }
+
+    /**
+     * 파일 첨부
+     * @param authUser
+     * @param id
+     * @param memberId
+     * @param file
+     * @throws IOException
+     */
+    @PostMapping("/cards/{id}/attachment")
+    public void attachFile(
+        @AuthenticationPrincipal AuthUser authUser,
+        @PathVariable Long id,
+        @RequestParam("memberId") Long memberId,
+        @RequestParam("file") MultipartFile file
+       ) throws IOException {
+        cardService.attachFile(authUser.getId(), id,memberId, file);
+    }
+
+    /**
+     * 파일첨부 목록 조회
+     * @param id
+     * @return
+     */
+    @GetMapping("/cards/{Id}/attachments")
+    public List<AttachmentResponse> getAttachments(@PathVariable Long id) {
+        return cardService.getAttachmentsByCardId(id);
+    }
+
+    /**
+     * 파일첨부 삭제
+     * @param id
+     * @param memberId
+     */
+    @DeleteMapping("/attachments/{id}")
+    public void deleteAttachment(@PathVariable Long id, @RequestParam("memberId") Long memberId){
+        cardService.deleteAttachment(id, memberId);
+    }
+
 }

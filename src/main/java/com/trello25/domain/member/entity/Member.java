@@ -31,4 +31,10 @@ public class Member extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public Member(Permission permission, Workspace workspace, User user) {
+        this.permission= permission;
+        this.workspace = workspace;
+        this.user= user;
+    }
 }

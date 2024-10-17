@@ -55,7 +55,7 @@ public class UserController {
     }
 
     //유저 검색
-    @PostMapping("/by-emails")
+    @GetMapping("/by-emails")
     public ResponseEntity<List<UserResponse>> getUsersByEmails(@RequestBody List<String> emails) {
         List<UserResponse> users = userService.getUsersByEmails(emails);
         return ResponseEntity.ok(users);

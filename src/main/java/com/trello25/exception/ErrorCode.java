@@ -29,7 +29,11 @@ public enum ErrorCode {
     INVALID_PERMISSION(HttpStatus.NOT_FOUND,"올바른 Permission을 입력해주세요"),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
 
-    EMAIL_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
+    EMAIL_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
+
+    LOCK_ACQUISITION_FAILED(HttpStatus.CONFLICT, "락을 획득하는 데 실패했습니다."),
+    LOCK_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "락 획득 시간이 초과되었습니다."),
+    UNABLE_TO_RELEASE_LOCK(HttpStatus.INTERNAL_SERVER_ERROR, "락을 해제하는 데 실패했습니다.");
 
 
     private final HttpStatus httpStatus;

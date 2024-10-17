@@ -2,12 +2,16 @@ package com.trello25.domain.user.entity;
 
 import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.common.entity.BaseEntity;
+import com.trello25.domain.member.entity.Member;
 import com.trello25.domain.user.enums.UserRole;
 import jakarta.persistence.*;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -29,11 +33,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private UserRole userRole;
 
-
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<WorkspaceMember> workspaceMembers;
-
-
     public User(String email, String password,UserRole userRole) {
         this.email = email;
         this.password = password;
@@ -41,7 +40,7 @@ public class User extends BaseEntity {
     }
 
 
-    protected User(Long id, String email, String password, UserRole userRole) {
+    public User(Long id, String email, String password, UserRole userRole) {
         this.id = id;
         this.email = email;
         this.password = password;

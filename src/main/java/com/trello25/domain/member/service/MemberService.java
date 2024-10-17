@@ -37,15 +37,11 @@ public class MemberService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
 
-      //  Member member = new Member();
-        member.setWorkspace(workspace);
-        member.setUser(user);
-        member.setPermission(Permission.BOARD_MEMBER);  // Default permission
-
-        return memberRepository.save(member);
+        Member basicMember = new Member(Permission.BOARD_MEMBER, user, workspace);
+        return memberRepository.save(basicMember);
     }
 
-    public ResponseEntity<Member> changePermission(AuthUser authUser,Long workspaceId, Long id, ChangePermissionRequest request) {
+    public Member changePermission(AuthUser authUser, Long workspaceId, Long id, ChangePermissionRequest request) {
         checkIfUserIsAuthorized(authUser);
 
         Workspace workspace = workspaceRepository.findById(workspaceId)
@@ -57,11 +53,8 @@ public class MemberService {
             throw new ApplicationException(ErrorCode.INVALID_PERMISSION);
         }
 
-        Member member = new Member();
-        member.setUser(user);
-        member.setPermission(request.getPermission());
-        member.setWorkspace(workspace);
-        return ResponseEntity.ok(memberRepository.save(member));
+        Member member = new Member(request.getPermission(), user, workspace);
+        return memberRepository.save(member);
     }
 
 

@@ -23,7 +23,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Permission permission;
 
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private Workspace workspace;
@@ -31,4 +31,10 @@ public class Member extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+   public Member(Permission permission, User user, Workspace workspace){
+        this.permission = permission;
+        this.user =user;
+        this.workspace=workspace;
+    }
 }

@@ -135,7 +135,7 @@ public class CardService {
                 .toList();
 
         List<CommentResponse> commentResponses = card.getComments().stream()
-                .map(comment -> new CommentResponse(comment.getId(), comment.getText()))
+                .map(comment -> new CommentResponse(comment.getId(), comment.getContent()))
                 .toList();
 
         return new CardDetailResponse(card, cardActiveResponses, commentResponses);

@@ -28,6 +28,6 @@ public class CreateCardRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime deadline;
 
-    List<Long> managers;
+    private List<Long> managers;
 
 }

@@ -26,5 +26,9 @@ cloud:
 
 background.default.image: https://s3.ap-northeast-2.amazonaws.com/nbc.trello/default-image.jpg
 
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
 slack:
   token: ${SLACK_TOKEN}

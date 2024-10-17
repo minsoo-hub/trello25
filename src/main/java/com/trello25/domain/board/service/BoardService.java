@@ -1,6 +1,5 @@
 package com.trello25.domain.board.service;
 
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -8,13 +7,31 @@ import com.trello25.domain.board.dto.request.CreateBoardRequest;
 import com.trello25.domain.board.dto.request.UpdateBoardRequest;
 import com.trello25.domain.board.dto.response.BoardResponse;
 import com.trello25.domain.board.entity.Board;
-
+import com.trello25.domain.board.repository.BoardRepository;
+import com.trello25.domain.common.entity.EntityStatus;
+import com.trello25.domain.kanban.dto.response.KanbanResponse;
+import com.trello25.domain.kanban.service.KanbanService;
+import com.trello25.domain.member.entity.Member;
+import com.trello25.domain.member.entity.Permission;
+import com.trello25.domain.member.repository.MemberRepository;
+import com.trello25.domain.workspace.entity.Workspace;
+import com.trello25.domain.workspace.repository.WorkspaceRepository;
+import com.trello25.exception.ApplicationException;
+import com.trello25.exception.ErrorCode;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class BoardService {
-
     private final BoardRepository boardRepository;
     private final WorkspaceRepository workspaceRepository;
     private final MemberRepository memberRepository;
@@ -27,11 +44,10 @@ public class BoardService {
     public void createBoard(Long currentUserId, long id, CreateBoardRequest createBoardRequest) {
         //워크스페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
-            .orElseThrow(()-> new ApplicationException(ErrorCode.LOGIN_REQUIRED));
-
+                .orElseThrow(()-> new ApplicationException(ErrorCode.WORKSPACE_NOT_FOUND));
         //워크스페이스 상태 확인
         if(workspace.getStatus() == EntityStatus.DELETED){
-            throw new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND);
+            throw new ApplicationException(ErrorCode.WORKSPACE_NOT_FOUND);
         }
 
         // 멤버가 해당 워크스페이스에 속해 있는지 확인
@@ -42,10 +58,10 @@ public class BoardService {
 
         //보드 생성
         Board board = new Board(
-            createBoardRequest.getTitle(),
-            createBoardRequest.getBackColor(),
-            DEFAULT_IMAGE,
-            workspace);
+                createBoardRequest.getTitle(),
+                createBoardRequest.getBackColor(),
+                DEFAULT_IMAGE,
+                workspace);
 
         boardRepository.save(board);
     }
@@ -68,31 +84,31 @@ public class BoardService {
 
         //보드 수정
         board.updateBoard(updateBoardRequest.getTitle(),
-            updateBoardRequest.getBackColor());
+                updateBoardRequest.getBackColor());
 
         boardRepository.save(board);
     }
 
     @Transactional(readOnly = true)
-    public java.util.List<BoardResponse> getBoardList(Long currentUserId, Long id) {
+    public List<BoardResponse> getBoardList(Long currentUserId, Long id) {
         //워크스페이스 있는지 확인
         Workspace workspace = workspaceRepository.findById(id)
-            .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
 
         // 유저가 해당 워크스페이스에 속해 있는지 확인
-         getMemberByUserIdAndWorkspaceId(currentUserId, workspace);
+        getMemberByUserIdAndWorkspaceId(currentUserId, workspace);
 
         // 보드 목록 조회
-        java.util.List<Board> boards = boardRepository.findByWorkspace_IdAndStatus(id, EntityStatus.ACTIVATED);
+        List<Board> boards = boardRepository.findByWorkspace_IdAndStatus(id, EntityStatus.ACTIVATED);
 
         return boards.stream()
-            .map(board -> new BoardResponse(
-                board.getId(),
-                board.getWorkspace().getId(),
-                board.getTitle(),
-                board.getBackColor()
-            ))
-            .toList();
+                .map(board -> new BoardResponse(
+                        board.getId(),
+                        board.getWorkspace().getId(),
+                        board.getTitle(),
+                        board.getBackColor()
+                ))
+                .toList();
     }
 
 
@@ -114,17 +130,17 @@ public class BoardService {
         java.util.List<KanbanResponse> kanbanResponses= kanbanService.getKanbans(board.getId());
 
         return new BoardResponse(
-            board.getId(),
-            board.getWorkspace().getId(),
-            board.getTitle(),
-            board.getBackColor(),
-            kanbanResponses
-         );
+                board.getId(),
+                board.getWorkspace().getId(),
+                board.getTitle(),
+                board.getBackColor(),
+                kanbanResponses
+        );
     }
 
     private Board getBoardById(Long id) {
         return boardRepository.findById(id)
-            .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 
     // 1. 로그인한 사용자가 해당 워크스페이스에 속해있는지 확인
@@ -152,7 +168,7 @@ public class BoardService {
 
     private Member getMemberByUserIdAndWorkspaceId(Long currentUserId, Workspace workspace) {
         return memberRepository.findByUser_IdAndWorkspace_Id(currentUserId, workspace.getId())
-            .orElseThrow(() -> new ApplicationException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     private boolean isReadOnlyMember(Member member) {

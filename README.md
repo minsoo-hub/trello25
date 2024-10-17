@@ -250,7 +250,9 @@
 <br>
 
 ## 6. ERD
-https://files.slack.com/files-pri/T06B9PCLY1E-F07SCUNC1T5/erd__1_.png
+
+![erd](https://files.slack.com/files-pri/T06B9PCLY1E-F07SCUNC1T5/erd__1_.png)
+
 
 
 

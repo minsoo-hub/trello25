@@ -68,9 +68,4 @@ public class KanbanController {
         return ResponseEntity.status(HttpStatus.OK)
                 .build();
     }
-
-    @GetMapping("/kanbans")
-    public ResponseEntity<List<KanbanResponse>> getKanbans(@RequestParam long boardId) {
-        return ResponseEntity.ok(kanbanService.getKanbans(boardId));
-    }
 }

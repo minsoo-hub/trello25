@@ -39,7 +39,7 @@ public class CommentService {
         Card card = cardRepository.findById(request.getCardId())
                 .orElseThrow(() -> new ApplicationException(CARD_NOT_FOUND));
 
-        Comment comment = new Comment(card, request.getContent());
+        Comment comment = new Comment(card, request.getContent(), member);
         commentRepository.save(comment);
     }
 
@@ -53,6 +53,9 @@ public class CommentService {
             throw new ApplicationException(UNAUTHORIZED_ACCESS);
         }
 
+        if (comment.isNotWrittenBy(member)) {
+            throw new ApplicationException(UNAUTHORIZED_ACCESS);
+        }
         comment.updateContent(request.getContent());
     }
 
@@ -66,6 +69,9 @@ public class CommentService {
             throw new ApplicationException(UNAUTHORIZED_ACCESS);
         }
 
+        if (comment.isNotWrittenBy(member)) {
+            throw new ApplicationException(UNAUTHORIZED_ACCESS);
+        }
         comment.delete();
     }
 }

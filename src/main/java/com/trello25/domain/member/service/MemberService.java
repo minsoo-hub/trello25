@@ -27,9 +27,8 @@ public class MemberService {
     public Member addMembers(AuthUser authUser, Long workspaceId, Long userId) {
 
         Member member = memberRepository.findMemberIdsByUserId(authUser.getId());
-        System.out.println("status = " + member);
 
-        if (member.getPermission() != Permission.WORKSPACE_MEMBER ) throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
+        if (member.getPermission()!= Permission.WORKSPACE_MEMBER ) throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
 
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.WORKSPACE_NOT_FOUND));
@@ -60,7 +59,7 @@ public class MemberService {
 
         Member member = new Member();
         member.setUser(user);
-        member.setPermission(Permission.WORKSPACE_MEMBER);
+        member.setPermission(request.getPermission());
         member.setWorkspace(workspace);
         return ResponseEntity.ok(memberRepository.save(member));
     }

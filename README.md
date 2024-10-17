@@ -251,15 +251,13 @@
 
 ## 6. ERD
 
-![erd](https://files.slack.com/files-pri/T06B9PCLY1E-F07SCUNC1T5/erd__1_.png)
-
+![ERD (1)](https://github.com/user-attachments/assets/aea556cd-f852-436e-905c-6be926908eb4)
 
 
 
 ## 7. API 명세
 
-![API](https://files.slack.com/files-pri/T06B9PCLY1E-F07T1RDH0BA/image.png)
-
+![image (1)](https://github.com/user-attachments/assets/71b62f74-a094-41ee-af91-77ed2a33f0f4)
 
 <br>
 

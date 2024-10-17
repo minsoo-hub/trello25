@@ -1,5 +1,6 @@
 package com.trello25.domain.board.service;
 
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -7,30 +8,13 @@ import com.trello25.domain.board.dto.request.CreateBoardRequest;
 import com.trello25.domain.board.dto.request.UpdateBoardRequest;
 import com.trello25.domain.board.dto.response.BoardResponse;
 import com.trello25.domain.board.entity.Board;
-import com.trello25.domain.board.repository.BoardRepository;
-import com.trello25.domain.common.entity.EntityStatus;
-import com.trello25.domain.kanban.dto.response.KanbanResponse;
-import com.trello25.domain.kanban.service.KanbanService;
-import com.trello25.domain.member.entity.Member;
-import com.trello25.domain.member.entity.Permission;
-import com.trello25.domain.member.repository.MemberRepository;
-import com.trello25.domain.workspace.entity.Workspace;
-import com.trello25.domain.workspace.repository.WorkspaceRepository;
-import com.trello25.exception.ApplicationException;
-import com.trello25.exception.ErrorCode;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BoardService {
+
     private final BoardRepository boardRepository;
     private final WorkspaceRepository workspaceRepository;
     private final MemberRepository memberRepository;

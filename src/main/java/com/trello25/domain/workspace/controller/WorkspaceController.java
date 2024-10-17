@@ -5,7 +5,6 @@ import com.trello25.domain.workspace.dto.UpdateWorkspaceRequest;
 import com.trello25.domain.workspace.dto.WorkspaceRequest;
 import com.trello25.domain.workspace.entity.Workspace;
 import com.trello25.domain.workspace.service.WorkspaceService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,9 +20,8 @@ public class WorkspaceController {
 
     @PostMapping
     public ResponseEntity<Void> createWorkspace(
-
             @AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody WorkspaceRequest request
+            @RequestBody WorkspaceRequest request
     ){
        return  workspaceService.create(authUser, request);
     }

@@ -11,5 +11,4 @@ public interface KanbanRepository extends JpaRepository<Kanban, Long> {
     Optional<Kanban> findByIdAndStatus(Long id, EntityStatus status);
 
     List<Kanban> findAllByBoardIdAndStatus(long boardId, EntityStatus activated);
-
 }

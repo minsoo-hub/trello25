@@ -2,7 +2,6 @@ package com.trello25.domain.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
@@ -30,7 +29,9 @@ public class BaseEntity {
     @Temporal(value = TemporalType.TIMESTAMP)
     protected LocalDateTime modifiedAt;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated
     @Column(nullable = false)
     protected EntityStatus status = EntityStatus.ACTIVATED;
+
+
 }

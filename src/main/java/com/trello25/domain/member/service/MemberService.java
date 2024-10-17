@@ -26,7 +26,11 @@ public class MemberService {
 
     public Member addMembers(AuthUser authUser, Long workspaceId, Long userId) {
 
-        checkIfUserIsAuthorized(authUser);
+        Member member = memberRepository.findMemberIdsByUserId(authUser.getId());
+        System.out.println("status = " + member);
+
+        if (member.getPermission() != Permission.WORKSPACE_MEMBER ) throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
+
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.WORKSPACE_NOT_FOUND));
 
@@ -34,7 +38,7 @@ public class MemberService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
 
-        Member member = new Member();
+      //  Member member = new Member();
         member.setWorkspace(workspace);
         member.setUser(user);
         member.setPermission(Permission.BOARD_MEMBER);  // Default permission
@@ -42,16 +46,22 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    public ResponseEntity<Member> changePermission(AuthUser authUser, Long id, ChangePermissionRequest request) {
+    public ResponseEntity<Member> changePermission(AuthUser authUser,Long workspaceId, Long id, ChangePermissionRequest request) {
         checkIfUserIsAuthorized(authUser);
 
-        Member member = memberRepository.findByIdAndStatusOrThrow(id, EntityStatus.ACTIVATED );
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.WORKSPACE_NOT_FOUND));
+
+        User user  = userRepository.findByIdAndStatusOrThrow(id, EntityStatus.ACTIVATED );
 
         if(!isValidPermission(request.getPermission())) {
             throw new ApplicationException(ErrorCode.INVALID_PERMISSION);
         }
 
-        member.setPermission(request.getPermission());
+        Member member = new Member();
+        member.setUser(user);
+        member.setPermission(Permission.WORKSPACE_MEMBER);
+        member.setWorkspace(workspace);
         return ResponseEntity.ok(memberRepository.save(member));
     }
 

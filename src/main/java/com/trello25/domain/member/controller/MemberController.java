@@ -26,12 +26,13 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     //member permission 변경
-    @PutMapping("/{id}")
+    @PutMapping("/{workspaceId}/{id}")
     public ResponseEntity<Member> changePermission(
             @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long workspaceId,
             @PathVariable Long id,
             @RequestBody ChangePermissionRequest request
     ){
-        return memberService.changePermission(authUser, id, request);
+        return memberService.changePermission(authUser,workspaceId, id, request);
     }
 }

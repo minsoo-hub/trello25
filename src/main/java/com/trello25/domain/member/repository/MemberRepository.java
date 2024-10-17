@@ -2,6 +2,7 @@ package com.trello25.domain.member.repository;
 
 import com.trello25.domain.common.entity.EntityStatus;
 import com.trello25.domain.member.entity.Member;
+import com.trello25.domain.member.entity.Permission;
 import com.trello25.exception.ApplicationException;
 import com.trello25.exception.ErrorCode;
 import java.util.List;
@@ -49,4 +50,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findAllByIdIn(List<Long> ids);
 
     Optional<Member> findByUser_IdAndWorkspace_Id(Long userId, Long workspaceId);
+
+    Member findMemberIdsByUserId(Long id);
 }

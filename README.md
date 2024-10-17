@@ -23,7 +23,7 @@
 - 버전 및 이슈관리 : ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white) ![깃](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white)
 - 협업 툴 : ![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
 - 디자인 : ![Excalidraw](https://img.shields.io/badge/excalidraw-%23F24E1E.svg?style=for-the-badge&logo=excalidraw&logoColor=white)
-- [커밋 컨벤션](https://www.notion.so/teamsparta/Github-Rules-cd0d76a9b1614cdc8a5fea2210cd8b3a)
+- [커밋 컨벤션](https://teamsparta.notion.site/Github-Rules-3f66a7e19eea4591adebe70af9cfaf1d)
 
 <br>
 
@@ -207,7 +207,7 @@
 - ppt 제작 및 발표
 
 - **기능**
-  - 보드 CRUD, 이미지 업로드
+  - 보드 CRUD, 이미지 업로드
 
 <br>
 
@@ -224,12 +224,12 @@
 ### 송민지
 - ppt 제작 
 - **기능**
-  - workspace, member CRUD
+  - workspace, member CRUD
 <br>
 
 ### 최원
 - **기능**
-  - 유저관리 :회원가입, 로그인, 스프링 시큐리티, 저검색 
+  - 유저관리 :회원가입, 로그인, 스프링 시큐리티, 유저검색 
 <br>
 
 ## 5. 개발 기간 및 작업 관리
@@ -267,6 +267,7 @@
 
 ### 나민수
 
+기능 구현에 어려움이 많았지만, 이번 팀프로젝트 하면서 팀원분들 덕분에 많이 배우고 얻어가는 것 같아서 좋습니다.
 
 <br>
 
@@ -276,7 +277,7 @@
 
 <br>
 
-### 김동현
+### 김동규
 
 
 

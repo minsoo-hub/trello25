@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=rounded&height=200&color=gradient&text=오늘도밤세조%Terllo)
+![header](https://capsule-render.vercel.app/api?type=venom&height=199&text=오늘도%20밤새조&textBg=false)
 
 # Trello Project
 

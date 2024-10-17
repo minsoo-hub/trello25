@@ -1,5 +1,4 @@
 package com.trello25.domain.member.dto;
-
 import com.trello25.domain.member.entity.Permission;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

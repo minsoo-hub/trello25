@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class Card extends BaseEntity {
 
     private String title;
     private String description;
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kanban_id", nullable = false)
@@ -52,7 +53,7 @@ public class Card extends BaseEntity {
     @OneToMany(mappedBy = "card")
     private List<CardActive> cardActives = new ArrayList<>();
 
-    public Card(String title, String description, LocalDateTime deadline, Kanban kanban
+    public Card(String title, String description, LocalDate deadline, Kanban kanban
     ) {
         this.title = title;
         this.description = description;
@@ -76,7 +77,7 @@ public class Card extends BaseEntity {
         this.description = description;
     }
 
-    public void updateDeadline(LocalDateTime deadline) {
+    public void updateDeadline(LocalDate deadline) {
         this.deadline = deadline;
     }
 

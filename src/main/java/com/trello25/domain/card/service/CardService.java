@@ -7,6 +7,7 @@ import com.trello25.domain.card.dto.request.CreateCardRequest;
 import com.trello25.domain.card.dto.request.DeleteCardRequest;
 import com.trello25.domain.card.dto.request.UpdateCardRequest;
 import com.trello25.domain.card.dto.response.CardDetailResponse;
+import com.trello25.domain.card.dto.response.SearchCardResponse;
 import com.trello25.domain.card.entity.Card;
 import com.trello25.domain.card.repository.CardRepository;
 import com.trello25.domain.cardactive.actiontype.ActionType;
@@ -23,10 +24,14 @@ import com.trello25.domain.member.entity.Permission;
 import com.trello25.domain.member.repository.MemberRepository;
 import com.trello25.exception.ApplicationException;
 import com.trello25.exception.ErrorCode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +46,7 @@ public class CardService {
 
     public void createCard(CreateCardRequest createCardRequest) {
 
-        if (createCardRequest.getDeadline().isBefore(LocalDateTime.now())) {
+        if (createCardRequest.getDeadline().isBefore(LocalDate.now())) {
             throw new ApplicationException(ErrorCode.INVALID_DEADLINE);
         }
 
@@ -84,7 +89,7 @@ public class CardService {
             throw new ApplicationException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
-        if (updateCardRequest.getDeadline().isBefore(LocalDateTime.now())) {
+        if (updateCardRequest.getDeadline().isBefore(LocalDate.now())) {
             throw new ApplicationException(ErrorCode.INVALID_DEADLINE);
         }
 
@@ -156,5 +161,12 @@ public class CardService {
         CardActive cardActive = new CardActive(card, author, ActionType.DELETE);
         cardActiveRepository.save(cardActive);
         card.addCardActive(cardActive);
+    }
+
+    public Page<SearchCardResponse> getCardsByConditions(Long id, String title,
+            String description, LocalDate deadline, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return cardRepository.findCardsByConditions(id,title,description,deadline,pageable);
+
     }
 }

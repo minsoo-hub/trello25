@@ -42,152 +42,97 @@
 ## 3. 프로젝트 구조
 
 ```
-|-- main
-    |-- java
-        |-- com
-            |-- sparta
-                |-- outsourcing
-                    |-- aop
-                        |-- apidocs
-                        |-- LogLevel.java
-                        |-- LogLevelController.java
-                        |-- LogUtility.java
-                        |-- OrderLoggingAspect.java
-                    |-- domain
-                        |-- common
-                            |-- entity
-                                |-- Timestamped.java
-                        |-- menu
-                            |-- controller
-                                |-- MenuController.java
-                            |-- dto
-                                |-- request
-                                    |-- CreateMenuRequestDto.java
-                                    |-- UpdateMenuRequestDto.java
-                                |-- response
-                                    |-- CreateMenuResponseDto.java
-                                    |-- UpdateMenuResponseDto.java
-                            |-- entity
-                                |-- Menu.java
-                            |-- repository
-                                |-- MenuRepository.java
-                            |-- service
-                                |-- MenuService.java
-                        |-- order
-                            |-- controller
-                                |-- OrderController.java
-                            |-- dto
-                                |-- request
-                                    |-- OrderRequestDto.java
-                                |-- response
-                                    |-- OrderResponseDto.java
-                            |-- entity
-                                |-- Orders.java
-                            |-- enums
-                                |-- OrderStatus.java
-                            |-- repository
-                                |-- OrderRepository.java
-                            |-- service
-                                |-- OrderService.java
-                        |-- review
-                            |-- controller
-                                |-- ReviewController.java
-                            |-- dto
-                                |-- ReviewRequestDTO.java
-                                |-- ReviewResponseDTO.java
-                            |-- entity
-                                |-- Review.java
-                            |-- repository
-                                |-- ReviewRepository.java
-                            |-- service
-                                |-- ReviewService.java
-                        |-- store
-                            |-- controller
-                                |-- StoreController.java
-                            |-- dto
-                                |-- request
-                                    |-- StoreRequestDto.java
-                                |-- response
-                                    |-- StoreResponseDto.java
-                            |-- entity
-                                |-- Store.java
-                            |-- repository
-                                |-- StoreRepository.java
-                            |-- service
-                                |-- StoreService.java
-                        |-- user
-                            |-- config
-                                |-- annotation
-                                    |-- Auth.java
-                                |-- auth
-                                    |-- AuthUserArgumentResolver.java
-                                    |-- FilterConfig.java
-                                    |-- JwtFilter.java
-                                    |-- JwtUtil.java
-                                    |-- WebConfig.java
-                                |-- error
-                                    |-- AuthErrorCode.java
-                                    |-- EroorCode.java
-                                |-- JpaConfig.java
-                                |-- password
-                                    |-- PasswordEncoder.java
-                            |-- controller
-                                |-- UserController.java
-                            |-- dto
-                                |-- AuthUser.java
-                                |-- request
-                                    |-- SignInRequestDto.java
-                                    |-- SignUpRequestDto.java
-                                    |-- UserDeleteDto.java
-                            |-- entity
-                                |-- User.java
-                            |-- enums
-                                |-- UserRole.java
-                            |-- repository
-                                |-- UserRepository.java
-                            |-- service
-                                |-- UserService.java
-                    |-- exception
-                        |-- ApplicationException.java
-                        |-- ErrorCode.java
-                        |-- ErrorResponse.java
-                        |-- GlobalExceptionHandler.java
-                    |-- OutsourcingApplication.java
-    |-- resources
-|-- test
-    |-- java
-        |-- com
-            |-- sparta
-                |-- outsourcing
-                    |-- domain
-                        |-- menu
-                            |-- controller
-                            |-- service
-                        |-- order
-                            |-- controller
-                            |-- service
-                        |-- review
-                            |-- service
-                        |-- store
-                            |-- controller
-                            |-- service
-                        |-- user
-                            |-- controller
-                            |-- service
-                    |-- OutsourcingApplicationTests.java
-    |-- java1
-        |-- com
-            |-- sparta
-                |-- outsourcing
-                    |-- domain
-                        |-- menu
-                            |-- controller
-                            |-- service
-                        |-- store
-                            |-- controller
-                            |-- service
-                        |-- user
-                            |-- service
+└─src
+    ├─main
+       ├─java
+          └─com
+              └─trello25
+                  ├─client
+                  │  └─slack
+                  ├─config
+                  ├─domain
+                  │  ├─attachment
+                  │  │  ├─dto
+                  │  │  │  └─response
+                  │  │  ├─entity
+                  │  │  └─repository
+                  │  ├─auth
+                  │  │  ├─annotation
+                  │  │  ├─controller
+                  │  │  ├─dto
+                  │  │  │  ├─request
+                  │  │  │  └─response
+                  │  │  └─service
+                  │  ├─board
+                  │  │  ├─controller
+                  │  │  ├─dto
+                  │  │  │  ├─request
+                  │  │  │  └─response
+                  │  │  ├─entity
+                  │  │  ├─enums
+                  │  │  ├─repository
+                  │  │  └─service
+                  │  ├─card
+                  │  │  ├─controller
+                  │  │  ├─dto
+                  │  │  │  ├─request
+                  │  │  │  └─response
+                  │  │  ├─entity
+                  │  │  ├─repository
+                  │  │  └─service
+                  │  ├─cardactive
+                  │  │  ├─actiontype
+                  │  │  ├─dto
+                  │  │  ├─entity
+                  │  │  └─repository
+                  │  ├─comment
+                  │  │  ├─controller
+                  │  │  ├─dto
+                  │  │  │  ├─request
+                  │  │  │  └─response
+                  │  │  ├─entity
+                  │  │  ├─repository
+                  │  │  └─service
+                  │  ├─common
+                  │  │  └─entity
+                  │  ├─kanban
+                  │  │  ├─controller
+                  │  │  ├─dto
+                  │  │  │  ├─request
+                  │  │  │  └─response
+                  │  │  ├─entity
+                  │  │  ├─repository
+                  │  │  └─service
+                  │  ├─kanbanposition
+                  │  │  ├─entity
+                  │  │  ├─repository
+                  │  │  └─service
+                  │  ├─manager
+                  │  │  ├─entity
+                  │  │  └─repository
+                  │  ├─member
+                  │  │  ├─controller
+                  │  │  ├─dto
+                  │  │  ├─entity
+                  │  │  ├─repository
+                  │  │  └─service
+                  │  ├─user
+                  │  │  ├─controller
+                  │  │  ├─dto
+                  │  │  │  ├─request
+                  │  │  │  └─response
+                  │  │  ├─entity
+                  │  │  ├─enums
+                  │  │  ├─repository
+                  │  │  └─service
+                  │  └─workspace
+                  │      ├─controller
+                  │      ├─dto
+                  │      ├─entity
+                  │      ├─repository
+                  │      └─service
+                  └─exception
+
 ```
 
 <br>
@@ -199,7 +144,7 @@
 - 시연영상 제작
 
 - **기능**
-  - 댓글 CRUD, 슬랙알림, DB 인덱싱
+  - 댓글 CRUD, 칸반 CRUD, 슬랙알림, DB 인덱싱
 <br>
 
 ### 이유진
@@ -277,7 +222,7 @@
 
 ### 김동규
 
-
+좋은 팀원분들과 프로젝트를 함께 할 수 있어 행복했습니다. 
 
 <br>
 

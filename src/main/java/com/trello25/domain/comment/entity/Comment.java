@@ -2,6 +2,7 @@ package com.trello25.domain.comment.entity;
 
 import com.trello25.domain.card.entity.Card;
 import com.trello25.domain.common.entity.BaseEntity;
+import com.trello25.domain.common.entity.EntityStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,17 +18,26 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Comment extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String text;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "card_id", nullable = false)
+    @JoinColumn(name = "card_id")
     private Card card;
 
-    public Comment(String text,Card card) {
-        this.text = text;
+    private String content;
+
+    public Comment(Card card, String content) {
         this.card = card;
+        this.content = content;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void delete() {
+        this.status = EntityStatus.DELETED;
     }
 }

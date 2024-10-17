@@ -29,10 +29,10 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private UserRole userRole;
 
-/*
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<WorkspaceMember> workspaceMembers;
-*/
+
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<WorkspaceMember> workspaceMembers;
+
 
     public User(String email, String password,UserRole userRole) {
         this.email = email;

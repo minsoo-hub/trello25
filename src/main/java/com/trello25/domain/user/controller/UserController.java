@@ -53,6 +53,8 @@ public class UserController {
         userService.updateUserRole(id, userRoleChangeRequest);
         return ResponseEntity.noContent().build();
     }
+
+    //유저 검색
     @PostMapping("/by-emails")
     public ResponseEntity<List<UserResponse>> getUsersByEmails(@RequestBody List<String> emails) {
         List<UserResponse> users = userService.getUsersByEmails(emails);

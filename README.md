@@ -258,69 +258,36 @@
 
 ## 7. API 명세
 
-| 작성자 | 기능명         | API Method | URL                                 |
-| :----- | -------------- | ---------- | :---------------------------------- |
-| 강은총 | 회원가입       | POST       | /api/users/signup                   |
-| 강은총 | 로그인         | POST       | /api/users/signin                   |
-| 강은총 | 회원탈퇴       | DELETE     | /api/users                          |
-| 이유진 | 메뉴 삭제      | DELETE     | /api/stores/{storeId}menus/{menuId} |
-| 이유진 | 메뉴 수정      | PUT        | /api/stores/{storeId}menus/{menuId} |
-| 이유진 | 메뉴 생성      | POST       | /api/{storeId}/menus                |
-| 한강   | 리뷰 생성      | POST       | /api/reviews                        |
-| 한강   | 리뷰 조회      | GET        | /api/stores/{storeId}/reviews       |
-| 조준호 | 가게 생성      | POST       | /api/stores                         |
-| 조준호 | 가게 수정      | PUT        | /api/stores/{storeId}               |
-| 조준호 | 가게 다건 조회 | GET        | /api/stores                         |
-| 조준호 | 가게 단건 조회 | GET        | /api/stores/{sotreId}               |
-| 조준호 | 가게 폐업      | DELETE     | /api/sotres/{storeId}               |
-| 조준호 | 광고 등록      | POST       | /api/stores/{storeId}/advertisement |
-| 이정현 | 주문 생성      | POST       | /api/orders                         |
-| 이정현 | 주문 상세 조회 | GET        | /api/orders/{orderId}               |
-| 이정현 | 주문 상태 변경 | PUT        | /api/orders/{orderId}/status        |
+![API](https://files.slack.com/files-pri/T06B9PCLY1E-F07T1RDH0BA/image.png)
 
-
-
-## 8. 개선 목표
-
-- 각 도메인이 다른 도메인의 Repository가 아닌 Service를 참조하는것으로 변경하기
-- 각자의 파트 추가기능을 언제든지 구현하여 커밋하기
 
 <br>
 
-## 9. 프로젝트 후기
+## 8. 프로젝트 후기
 
-### �� 강은총
+### 나민수
 
-테스트 코드를 본격적으로 작성하는 건 처음이라 많이 헤맸고 인텔리제이 에서 새로운 오류 들을 많이 만나서 힘들었지만 팀원들이 많이 도와주셔서 무사히 잘 끝 마친 것 같습니다.
 
 <br>
 
-### �� 이유진
+### 이유진
 
 기간 내 기능 구현과 테스트 코드까지 작성하느라 리팩토링과 트러블 슈팅 기록등을 하지 못해서 아쉬움이 남지만 테스트코드 부분에서 많이 배우고 팀원들이 많이 도와주어서 무사히 프로젝트를 마무리한 것 같습니다.
 
 <br>
 
-### �� 이정현
+### 김동현
 
-깃관련해서 큰 문제없이 진행되서 행복했습니다.
+
 
 <br>
 
-### �� 조준호
+### 송민지
 
- 이번에는 팀장을 맡으며 이런저런 실수가 잦았지만 팀원분들이 잘 실수를 매꿔주셔서 감사했다.
-
- 프로젝트에 굵직한 문제가 없이 팀원분들의 역할 분담이 잘되어 수월하게 끝낼 수 있었다.
-
+ 
 <br>
 
-### ��한강
-
-진짜 많이 배워갔던 한 주였습니다... 도와주신 팀원분들 다 감사해요! 
-
-(팀원들이 거의 교수님급이였어요)
-접기
+### 최원
 
 
 
@@ -335,7 +302,6 @@
 
 
 
-김동규(Java_6기), 나민수(Java_6기), 이유진(java_6기), 최원(JAVA_6기)에 메시지 보내기
 
 
 

@@ -47,4 +47,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByIdAndStatus(Long id, EntityStatus status);
     List<Member> findAllByIdIn(List<Long> ids);
+
+    Optional<Member> findByUser_IdAndWorkspace_Id(Long userId, Long workspaceId);
 }

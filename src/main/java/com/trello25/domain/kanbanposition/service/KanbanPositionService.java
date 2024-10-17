@@ -40,6 +40,7 @@ public class KanbanPositionService {
         kanbanPosition.updateKanbanPosition(kanban.getId(), position);
     }
 
+    @Transactional(readOnly = true, noRollbackFor = ApplicationException.class)
     public KanbanPosition getKanbanPosition(long boardId) {
         return kanbanPositionRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new ApplicationException(KANBAN_POSITION_NOT_FOUND));

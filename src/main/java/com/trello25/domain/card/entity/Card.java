@@ -7,7 +7,6 @@ import com.trello25.domain.common.entity.BaseEntity;
 import com.trello25.domain.common.entity.EntityStatus;
 import com.trello25.domain.kanban.entity.Kanban;
 import com.trello25.domain.manager.entity.Manager;
-import com.trello25.domain.member.entity.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -68,7 +67,6 @@ public class Card extends BaseEntity {
     public void addCardActive(CardActive cardActive) {
         cardActives.add(cardActive);
     }
-
 
     public void updateTitle(String title) {
         this.title = title;

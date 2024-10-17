@@ -1,5 +1,6 @@
 package com.trello25.domain.kanban.service;
 
+import static com.trello25.exception.ErrorCode.*;
 import static com.trello25.exception.ErrorCode.BOARD_NOT_FOUND;
 import static com.trello25.exception.ErrorCode.KANBAN_NOT_FOUND;
 import static com.trello25.exception.ErrorCode.MEMBER_NOT_FOUND;
@@ -23,10 +24,10 @@ import com.trello25.domain.member.entity.Member;
 import com.trello25.domain.member.entity.Permission;
 import com.trello25.domain.member.repository.MemberRepository;
 import com.trello25.exception.ApplicationException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+
+import com.trello25.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,7 +104,14 @@ public class KanbanService {
     @Transactional(readOnly = true)
     public List<KanbanResponse> getKanbans(long boardId) {
         List<Kanban> kanbans = kanbanRepository.findAllByBoardIdAndStatus(boardId, EntityStatus.ACTIVATED);
-        KanbanPosition kanbanPosition = kanbanPositionService.getKanbanPosition(boardId);
+        KanbanPosition kanbanPosition = null;
+        try {
+            kanbanPosition = kanbanPositionService.getKanbanPosition(boardId);
+        } catch (ApplicationException e) {
+            if (e.getMessage().equals(KANBAN_POSITION_NOT_FOUND.getMessage())) {
+                return new ArrayList<>();
+            }
+        }
 
         List<Long> positions = kanbanPosition.getPositions();
         Map<Long, Integer> positionMap = new HashMap<>();

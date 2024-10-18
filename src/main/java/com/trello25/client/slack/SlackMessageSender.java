@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SlackMessageSender {
 
-    public static final String CHANNEL_NAME = "프로젝트";
+    private static final String CHANNEL_NAME = "프로젝트";
 
     private final MethodsClient methodsClient;
 

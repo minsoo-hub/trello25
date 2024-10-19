@@ -4,6 +4,7 @@ import static com.trello25.exception.ErrorCode.CARD_NOT_FOUND;
 import static com.trello25.exception.ErrorCode.COMMENT_NOT_FOUND;
 import static com.trello25.exception.ErrorCode.UNAUTHORIZED_ACCESS;
 
+import com.trello25.client.slack.SlackMessageSender;
 import com.trello25.domain.auth.dto.AuthUser;
 import com.trello25.domain.card.entity.Card;
 import com.trello25.domain.card.repository.CardRepository;
@@ -28,6 +29,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CardRepository cardRepository;
     private final MemberRepository memberRepository;
+    private final SlackMessageSender slackMessageSender;
 
     public void createComment(AuthUser authUser, CreateCommentRequest request) {
         Member member = memberRepository.findMemberForCommentByCardId(authUser.getId(), request.getCardId())
@@ -41,6 +43,8 @@ public class CommentService {
 
         Comment comment = new Comment(card, request.getContent(), member);
         commentRepository.save(comment);
+
+        slackMessageSender.sendMessage("댓글이 생성되었습니다.");
     }
 
     public void updateCommentContent(AuthUser authUser, long commentId, UpdateCommentContentRequest request) {

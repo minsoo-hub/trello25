@@ -4,6 +4,7 @@ package com.trello25.domain.card.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.trello25.client.slack.SlackMessageSender;
 import com.trello25.domain.attachment.dto.response.AttachmentResponse;
 import com.trello25.domain.attachment.entity.Attachment;
 import com.trello25.domain.attachment.repository.AttachmentRepository;
@@ -53,6 +54,7 @@ public class CardService {
     private final CardActiveRepository cardActiveRepository;
     private final AmazonS3 s3Client;
     private final AttachmentRepository attachmentRepository;
+    private final SlackMessageSender slackMessageSender;
 
     public void createCard(CreateCardRequest createCardRequest) {
 
@@ -134,6 +136,8 @@ public class CardService {
         CardActive cardActive = new CardActive(card, author, ActionType.UPDATE);
         cardActiveRepository.save(cardActive);
         card.addCardActive(cardActive);
+
+        slackMessageSender.sendMessage("카드가 수정되었습니다.");
     }
 
     @Transactional(readOnly = true)

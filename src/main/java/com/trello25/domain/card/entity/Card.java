@@ -7,11 +7,13 @@ import com.trello25.domain.common.entity.BaseEntity;
 import com.trello25.domain.common.entity.EntityStatus;
 import com.trello25.domain.kanban.entity.Kanban;
 import com.trello25.domain.manager.entity.Manager;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -28,7 +30,7 @@ import org.hibernate.annotations.BatchSize;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "cards")
+@Table(name = "cards", indexes = @Index(name = "idx_deadline", columnList = "deadline"))
 public class Card extends BaseEntity {
 
     @Id
@@ -43,7 +45,7 @@ public class Card extends BaseEntity {
     @JoinColumn(name = "kanban_id", nullable = false)
     private Kanban kanban;
 
-    @OneToMany(mappedBy = "card")
+    @OneToMany(mappedBy = "card", cascade = CascadeType.PERSIST)
     private List<Manager> managers = new ArrayList<>();
 
     @OneToMany(mappedBy = "card")

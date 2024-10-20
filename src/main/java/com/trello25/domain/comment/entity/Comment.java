@@ -48,6 +48,6 @@ public class Comment extends BaseEntity {
     }
 
     public boolean isNotWrittenBy(Member member) {
-        return this.member.getId() == member.getId();
+        return this.member.getId() != member.getId();
     }
 }

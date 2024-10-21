@@ -33,6 +33,7 @@ public class MemberController {
             @PathVariable Long id,
             @RequestBody ChangePermissionRequest request
     ){
-        return memberService.changePermission(authUser,workspaceId, id, request);
+        //dto 레핑
+        return ResponseEntity.ok(memberService.changePermission(authUser,workspaceId, id, request));
     }
 }
